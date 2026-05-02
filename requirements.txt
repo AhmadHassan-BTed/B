@@ -1,0 +1,9 @@
+PyQt6>=6.6.0
+pywin32>=306
+llama-cpp-python>=0.2.0
+piper-tts>=1.2.0
+sounddevice>=0.4.6
+pedalboard>=0.9.0
+scipy>=1.10.0
+faster-whisper>=1.0.0
+numpy>=1.24.0
