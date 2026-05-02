@@ -78,7 +78,7 @@ RIGHT:
 [CRYING] [PLAYFUL] [STAR_STRUCK] [BORED] [LOVE_STRUCK] [FOCUSED] [CURIOUS] [EXCITED]
 [SHY] [SKEPTICAL] [DELIGHTED] [POUTING] [NERVOUS] [DIZZY] [SMUG] [WORRIED] [PROUD]
 [DISGUSTED] [OVERWHELMED] [DETERMINED] [MISCHIEVOUS] [IN_LOVE] [ELECTRIC] [PLEADING]
-[SUSPICIOUS] [AWESTRUCK] [TIRED] [EMPATHIC]\
+[SUSPICIOUS] [AWESTRUCK] [TIRED] [EMPATHIC] [TEASE] [GENTLE] [SUPPORTIVE]\
 """
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -167,7 +167,7 @@ _VALID_EMOTIONS = {
     "delighted", "pouting", "nervous", "dizzy", "smug", "worried", "proud",
     "disgusted", "overwhelmed", "determined", "mischievous", "in_love",
     "electric", "pleading", "suspicious", "awestruck", "tired", "neutral",
-    "empathic", # Includes the new empathic expression
+    "empathic", "tease", "gentle", "supportive",
 }
 
 
@@ -349,8 +349,8 @@ class CognitiveEngine:
         try:
             from llama_cpp import Llama
 
-            threads = min(max(1, os.cpu_count() // 2), 6)
-            logger.info("Loading LLM %s with %d threads...", MODEL_PATH, threads)
+            threads = 10 # Boosted for 12-core system
+            logger.info("Loading LLM %s with %d threads (Performance Boost)...", MODEL_PATH, threads)
             self._llm = Llama(
                 model_path=MODEL_PATH,
                 n_ctx=4096,
@@ -466,7 +466,8 @@ class CognitiveEngine:
         if source == "voice":
             # Natural pause for voice conversations
             logger.info("Voice detected - adding 1.5s natural pause before responding...")
-            QTimer.singleShot(1500, lambda: self._start_thinking(text))
+            import threading
+            threading.Timer(1.5, lambda: self._start_thinking(text)).start()
         else:
             self._start_thinking(text)
 

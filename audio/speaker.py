@@ -256,10 +256,18 @@ class VoiceEngine(QObject):
         self._llm_thinking = True # User speaking means LLM will start thinking soon
         try:
             import sounddevice as sd
-            sd.stop()
-            with self._queue.mutex:
-                self._queue.queue.clear()
-            logger.info("Voice playback interrupted by user.")
+            # Check if we are actually playing or have something queued
+            is_playing = False
+            try:
+                is_playing = sd.get_stream().active
+            except:
+                pass
+                
+            if is_playing or not self._queue.empty():
+                sd.stop()
+                with self._queue.mutex:
+                    self._queue.queue.clear()
+                logger.info("Voice playback interrupted by user.")
         except Exception:
             pass
 

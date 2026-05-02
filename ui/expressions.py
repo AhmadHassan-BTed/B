@@ -13,7 +13,7 @@ Glow helpers and shape builders live here too since they're only
 used by the expression drawing functions.
 
 Every draw_* function has the same signature:
-    draw_neutral(painter: QPainter) -> None
+draw_neutral(painter: QPainter) -> None
 """
 
 from __future__ import annotations
@@ -592,3 +592,10 @@ def draw_empathic(p: QPainter) -> None:
     p.rotate(8)
     _glow_rrect(p, QRectF(-w / 2, -h / 2, w, h), 6)
     p.restore()
+    
+# ──────────────────────────────────────────────────────────────
+# ALIASES — Mapping new tags to closest existing visuals
+# ──────────────────────────────────────────────────────────────
+draw_tease = draw_playful
+draw_gentle = draw_empathic
+draw_supportive = draw_empathic

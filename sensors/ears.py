@@ -31,8 +31,8 @@ MODEL_SIZE = "tiny.en"  # tiny.en is fast and accurate enough for English
 SAMPLE_RATE = 16000     # Whisper expects 16kHz
 CHANNELS = 1            # Mono
 CHUNK_SIZE = 1024       # Buffer size for sounddevice
-SILENCE_THRESHOLD = 0.01 # RMS threshold for "speech" vs "silence"
-MIN_SPEECH_DURATION = 0.5 # Seconds of speech before we start transcribing
+SILENCE_THRESHOLD = 0.02 # RMS threshold for "speech" vs "silence"
+MIN_SPEECH_DURATION = 0.8 # Seconds of speech before we start transcribing
 MAX_BUFFER_DURATION = 10.0 # Maximum seconds to buffer
 
 class EarsSensor:
@@ -49,15 +49,20 @@ class EarsSensor:
         
         # Performance/Behavior tuning
         self._last_transcription_time = 0
-        self._transcription_interval = 0.6 # Seconds between partial transcriptions
+        self._transcription_interval = 0.3 # Seconds between partial transcriptions
         self._silence_start = None
         self._speech_detected = False
 
     def _lazy_load_model(self):
         if self._model is None:
-            logger.info("Loading Faster-Whisper model: %s...", MODEL_SIZE)
-            # Use CPU by default, int8 for low memory/CPU usage
-            self._model = WhisperModel(MODEL_SIZE, device="cpu", compute_type="int8")
+            # Increase threads and workers for better performance on 12-core system
+            self._model = WhisperModel(
+                MODEL_SIZE, 
+                device="cpu", 
+                compute_type="int8",
+                cpu_threads=4,
+                num_workers=2
+            )
             logger.info("Faster-Whisper model loaded.")
 
     def start_listening(self) -> None:
@@ -158,6 +163,7 @@ class EarsSensor:
             
             text = " ".join([s.text for s in segments]).strip()
             if text:
+                logger.debug("Whisper hearing: %s", text)
                 self._bus.publish("user_hearing", {"text": text})
         except Exception:
             pass # Ignore errors in partial transcription
