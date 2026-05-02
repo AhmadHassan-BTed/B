@@ -252,9 +252,11 @@ def _setup_hotkeys(app: QApplication, input_box: InputBox, ears: EarsSensor, bus
         HOTKEY_KILL = 1
         HOTKEY_INPUT = 2
         HOTKEY_SPEAK = 3
+        HOTKEY_WORK = 4
         VK_Q = 0x51
         VK_B = 0x42
         VK_V = 0x56
+        VK_W = 0x57
 
         # Kill Switch
         result_kill = ctypes.windll.user32.RegisterHotKey(
@@ -276,14 +278,23 @@ def _setup_hotkeys(app: QApplication, input_box: InputBox, ears: EarsSensor, bus
         if not result_speak:
             logger.warning("Failed to register speak mode hotkey")
 
+        # Work Mode
+        result_work = ctypes.windll.user32.RegisterHotKey(
+            None, HOTKEY_WORK, MOD_CTRL_SHIFT_ALT, VK_W
+        )
+        if not result_work:
+            logger.warning("Failed to register work mode hotkey")
+
         # Keep references to prevent garbage collection
         app._hotkey_kill = HOTKEY_KILL
         app._hotkey_input = HOTKEY_INPUT
         app._hotkey_speak = HOTKEY_SPEAK
+        app._hotkey_work = HOTKEY_WORK
         app._input_box = input_box
         app._ears = ears
         app._bus = bus
         app._speak_mode = False
+        app._work_mode = False
         
         from PyQt6.QtCore import QAbstractNativeEventFilter
         class HotkeyFilter(QAbstractNativeEventFilter):
@@ -310,12 +321,20 @@ def _setup_hotkeys(app: QApplication, input_box: InputBox, ears: EarsSensor, bus
                             logger.info("🎤 Speak Mode: OFF")
                             app._ears.stop_listening()
                         return True, 0
+                    elif msg.wParam == app._hotkey_work:
+                        app._work_mode = not app._work_mode
+                        app._bus.publish("b_work_mode_toggled", {"active": app._work_mode})
+                        if app._work_mode:
+                            logger.info("💼 Work Mode: ON")
+                        else:
+                            logger.info("💼 Work Mode: OFF")
+                        return True, 0
                 return False, 0
         
         app._hotkey_filter = HotkeyFilter()
         app.installNativeEventFilter(app._hotkey_filter)
 
-        logger.info("Hotkeys registered: Kill (Ctrl+Shift+Alt+Q), Input (Ctrl+Shift+Alt+B), Speak (Ctrl+Shift+Alt+V)")
+        logger.info("Hotkeys registered: Kill (Ctrl+Shift+Alt+Q), Input (Ctrl+Shift+Alt+B), Speak (Ctrl+Shift+Alt+V), Work (Ctrl+Shift+Alt+W)")
 
     except Exception:
         logger.exception("Failed to set up hotkeys")

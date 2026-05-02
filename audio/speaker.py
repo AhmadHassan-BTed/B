@@ -204,6 +204,7 @@ class VoiceEngine(QObject):
 
         self._bus.subscribe("b_spoke", self._on_b_spoke, priority=90)
         self._bus.subscribe("user_spoke", self._on_user_spoke, priority=90)
+        self._bus.subscribe("user_interrupted", self._on_user_spoke, priority=90) # Interruption stops playback too
         self._bus.subscribe("b_thinking", self._on_b_thinking, priority=90)
         self._bus.subscribe("llm_response", self._on_llm_response, priority=90)
         
@@ -340,14 +341,17 @@ class VoiceEngine(QObject):
                         
                     # Trigger the face and UI change exactly when the audio starts
                     # We MUST emit via signal to ensure this happens on the main GUI thread!
+                    self._publish_signal.emit("assistant_speaking_start", {})
                     self._publish_signal.emit("emotion_changed", {"emotion": emotion, "intensity": 1.0})
                     self._publish_signal.emit("b_playing_sentence", {"text": text, "emotion": emotion})
 
                     # 4. Play spoken audio synchronously
                     sd.play(processed_array, samplerate=self._sample_rate, blocking=True)
                     
+                    self._publish_signal.emit("assistant_speaking_end", {})
+                    
                     import time
-                    time.sleep(0.3) # Extra safety sleep for sound card flush
+                    time.sleep(0.1) # Brief safety sleep for sound card flush
                     
                     # Only signal "finished" if there's nothing else immediately waiting in the queue
                     # AND the LLM is not currently generating more sentences.
@@ -357,5 +361,7 @@ class VoiceEngine(QObject):
                     
             except Exception as e:
                 logger.exception("Error during robo-audio synthesis: %s", e)
+                # Ensure end signal is sent even on error
+                self._publish_signal.emit("assistant_speaking_end", {})
             finally:
                 self._queue.task_done()

@@ -31,8 +31,10 @@ class AutonomyEngine:
         self._bus.subscribe("context_updated", self._on_context_updated)
         self._bus.subscribe("user_activity_updated", self._on_user_activity_updated)
         self._bus.subscribe("b_set_behavior", self._on_set_behavior)
+        self._bus.subscribe("b_work_mode_toggled", self._on_work_mode_toggled)
         
         self._is_busy = False
+        self._work_mode = False
         self._behavior_mode = "wander"
         self._running = True
         self._thread = threading.Thread(
@@ -58,6 +60,15 @@ class AutonomyEngine:
                 logger.info("User activity lowered.")
                 if self._behavior_mode != "corner":
                     self._bus.publish("emotion_changed", {"emotion": "neutral", "intensity": 1.0})
+
+    def _on_work_mode_toggled(self, payload: dict):
+        self._work_mode = payload.get("active", False)
+        if self._work_mode:
+            # When working, we want more frequent (but silent-by-default) checks
+            self._target_interval = random.uniform(45, 90) 
+        else:
+            self._reset_timer()
+        logger.info(f"Autonomy proactivity adjusted for Work Mode: {self._work_mode}")
 
     def _on_set_behavior(self, payload: dict):
         self._behavior_mode = payload.get("mode", "wander")
@@ -95,8 +106,8 @@ class AutonomyEngine:
             if self._behavior_mode == "corner":
                 continue
 
-            # Skip if B is already talking or user is active
-            if self._is_busy and self._behavior_mode != "follow":
+            # Skip if B is already talking or user is active (unless in Work Mode)
+            if self._is_busy and self._behavior_mode != "follow" and not self._work_mode:
                 continue
 
             elapsed = time.monotonic() - self._last_activity_time

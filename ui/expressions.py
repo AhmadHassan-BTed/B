@@ -599,3 +599,5 @@ def draw_empathic(p: QPainter) -> None:
 draw_tease = draw_playful
 draw_gentle = draw_empathic
 draw_supportive = draw_empathic
+draw_elated = draw_delighted
+draw_assuring = draw_supportive

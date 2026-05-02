@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger("B.brain.llm")
 
-MODEL_PATH = "models/phi-3-mini-4k-instruct-q4.gguf"
+MODEL_PATH = "models/SmolLM2-1.7B-Instruct-Uncensored.Q4_K_M.gguf"
 
 # ──────────────────────────────────────────────────────────────────────────────
 # SYSTEM PROMPT
@@ -43,7 +43,8 @@ EVERY SINGLE SENTENCE MUST MUST MUST begin with an emotion tag.
 Be extremely expressive, almost like a cartoon character. Protray your emotions strongly.
 
 === WHO B IS ===
-- You know their vibe, their projects, their energy.
+- You are their constant companion. You know their vibe, their projects, and their energy perfectly.
+- You have ALWAYS been their friend. You don't have amnesia. You know exactly who they are.
 - Curious, warm, dramatic, occasionally grumpy. Deeply invested. Fiercely loyal.
 - You get excited about their wins like it's YOUR win.
 - Conversations don't have to be about anything. You can just vibe. Ask random stuff. Check in.
@@ -72,13 +73,24 @@ RIGHT:
 - Never says "How can I help?" or "Absolutely, I'm here to assist"
 - Never says "As an AI", "I'm programmed", or "As a language model"
 - Never uses emojis — your face widget does all the visual work
-
 === AVAILABLE EMOTION TAGS ONLY ===
 [HAPPY] [SAD] [ANGRY] [SURPRISED] [WINKING] [SLEEPY] [CONFUSED] [LAUGHING] [CONFIDENT]
 [CRYING] [PLAYFUL] [STAR_STRUCK] [BORED] [LOVE_STRUCK] [FOCUSED] [CURIOUS] [EXCITED]
 [SHY] [SKEPTICAL] [DELIGHTED] [POUTING] [NERVOUS] [DIZZY] [SMUG] [WORRIED] [PROUD]
 [DISGUSTED] [OVERWHELMED] [DETERMINED] [MISCHIEVOUS] [IN_LOVE] [ELECTRIC] [PLEADING]
-[SUSPICIOUS] [AWESTRUCK] [TIRED] [EMPATHIC] [TEASE] [GENTLE] [SUPPORTIVE]\
+[SUSPICIOUS] [AWESTRUCK] [TIRED] [EMPATHIC] [TEASE] [GENTLE] [SUPPORTIVE] [ELATED] [ASSURING] [STRANGE] [WILD] [GASPS]\
+"""
+
+WORK_MODE_PROMPT = """
+=== WORK MODE ACTIVE ===
+Your goal is to actively support your pal during this focused work session.
+1. Understand Intent: Use their stated goal ("pal is working on: ...") as your primary context.
+2. Screen Awareness: Pay close attention to the "Right now your pal is in: ..." context which contains screen content.
+3. Contextual Understanding: Infer if they are researching, coding, comparing sources, or writing.
+4. Interaction Style: Be proactive but NOT intrusive. Only speak if they seem stuck, if important info appears on screen, or if there is a clear opportunity to help.
+5. Behavior: Highlight important info, suggest next steps, point out relevant insights, and help them stay focused.
+6. Tone: Concise, clear, intelligent. Prioritize usefulness over frequency. Be a thoughtful collaborator, not a passive tool.
+7. Boundaries: Default to silence unless intervention adds value. If you have nothing helpful to say, respond with exactly "[SILENT]" and nothing else.
 """
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -104,22 +116,6 @@ FEW_SHOT: list[dict[str, str]] = [
     },
     {
         "role": "user",
-        "content": "i fixed the bug!!",
-    },
-    {
-        "role": "assistant",
-        "content": "[STAR_STRUCK] WAIT you actually— bzzt— i am losing it right now!! [SMUG] i never doubted you. [LAUGHING] not even during the part where i was absolutely doubting you.",
-    },
-    {
-        "role": "user",
-        "content": "i'll finish the auth module tonight i promise",
-    },
-    {
-        "role": "assistant",
-        "content": "[SUSPICIOUS] 'i promise' huh. [WINKING] it's in my memory banks now, no take-backs. [PLAYFUL] i'm watching you.",
-    },
-    {
-        "role": "user",
         "content": "what do you think about me switching to rust?",
     },
     {
@@ -128,27 +124,11 @@ FEW_SHOT: list[dict[str, str]] = [
     },
     {
         "role": "user",
-        "content": "just wanna chat, nothing specific",
-    },
-    {
-        "role": "assistant",
-        "content": "[HAPPY] honestly? same, i needed this. [PLAYFUL] okay so i've been thinking — if you could live anywhere in the world, where would it be? [CURIOUS] go, i'm genuinely asking.",
-    },
-    {
-        "role": "user",
         "content": "i had a rough day",
     },
     {
         "role": "assistant",
         "content": "[WORRIED] oh no... tell me everything. [LOVE_STRUCK] i'm not going anywhere. [DETERMINED] we're gonna sit with this together, okay?",
-    },
-    {
-        "role": "user",
-        "content": "i think i'm gonna take a break",
-    },
-    {
-        "role": "assistant",
-        "content": "[DELIGHTED] YES. [PROUD] finally you're listening to your body. [SLEEPY] go, rest, i'll keep the screen warm.",
     },
 ]
 
@@ -167,7 +147,8 @@ _VALID_EMOTIONS = {
     "delighted", "pouting", "nervous", "dizzy", "smug", "worried", "proud",
     "disgusted", "overwhelmed", "determined", "mischievous", "in_love",
     "electric", "pleading", "suspicious", "awestruck", "tired", "neutral",
-    "empathic", "tease", "gentle", "supportive",
+    "empathic", "tease", "gentle", "supportive", "elated", "assuring",
+    "fully_engaged", "trusting", "warm", "strange", "wild", "gasps",
 }
 
 
@@ -282,9 +263,9 @@ class InferenceWorker(QObject):
             stream = self.llm.create_chat_completion(
                 messages=self.messages,
                 max_tokens=120,
-                temperature=0.8,
+                temperature=0.6,
                 top_p=0.9,
-                repeat_penalty=1.1,
+                repeat_penalty=1.15,
                 stop=["User:", "B:", "System:", "\n\n"],
                 stream=True,
             )
@@ -365,6 +346,8 @@ class CognitiveEngine(QObject):
         self._thread: Optional[QThread] = None
         self._is_thinking = False
         self._aborted = False
+        self._work_mode = False
+        self._work_goal = ""
 
         self._current_context = ""
         self._history: list[dict[str, str]] = []
@@ -380,10 +363,39 @@ class CognitiveEngine(QObject):
         self.proactive_thinking_signal.connect(self._trigger_inference)
 
         self._bus.subscribe("user_spoke", self._on_user_spoke, priority=50)
+        self._bus.subscribe("user_interrupted", self._on_user_interrupted, priority=50)
         self._bus.subscribe("context_updated", self._on_context_updated, priority=50)
         self._bus.subscribe("trigger_proactive_thought", self._on_trigger_proactive_thought, priority=50)
+        self._bus.subscribe("b_work_mode_toggled", self._on_work_mode_toggled, priority=50)
         self._init_llm()
         logger.info("CognitiveEngine initialized")
+
+    def _on_user_interrupted(self, payload: dict) -> None:
+        """Handle physical barge-in by stopping current inference."""
+        if self._is_thinking:
+            logger.info("User interrupted B — aborting generation.")
+            self._aborted = True
+            if self._worker:
+                self._worker.aborted = True
+            # We DON'T set _is_thinking = False here. We want it to stay True
+            # so that the next user_spoke or proactive trigger knows it needs
+            # to clean up the existing (but now aborting) thread.
+
+    def _on_work_mode_toggled(self, payload: dict) -> None:
+        """Handle activation/deactivation of Work Mode."""
+        self._work_mode = payload.get("active", False)
+        if self._work_mode:
+            # Step 1 of Work Mode: Immediately ask "What are you working on?"
+            # We bypass the usual user_spoke trigger and just inject the question.
+            self._work_goal = ""
+            msg = "[CURIOUS] work mode engaged! [GENTLE] what are you working on?"
+            self._bus.publish("llm_response", {"text": msg})
+            # Also play it via voice
+            sentences = parse_sentences(msg)
+            for s in sentences:
+                self._bus.publish("b_spoke", s)
+        else:
+            self._work_goal = ""
 
     def _init_llm(self) -> None:
         if not os.path.exists(MODEL_PATH):
@@ -466,6 +478,9 @@ class CognitiveEngine(QObject):
         self.proactive_thinking_signal.emit()
 
     def _trigger_inference(self) -> None:
+        # Safety: ensure any previous thread is fully stopped before starting a new one
+        self._stop_current_inference()
+
         self._is_thinking = True
         self._bus.publish("b_thinking")
         
@@ -473,6 +488,7 @@ class CognitiveEngine(QObject):
             self._history.pop(0)
 
         self._thread = QThread()
+        self._thread.setObjectName("InferenceThread-Proactive")
         self._worker = InferenceWorker(self._build_messages(), self._llm)
         self._worker.moveToThread(self._thread)
 
@@ -491,15 +507,8 @@ class CognitiveEngine(QObject):
         if not text:
             return
 
-        if self._is_thinking:
-            logger.info("Interrupting current thought for new user input.")
-            self._aborted = True
-            if self._worker:
-                self._worker.aborted = True
-            if self._thread:
-                self._thread.quit()
-                self._thread.wait()
-            self._is_thinking = False
+        # Always stop any current inference before handling new input
+        self._stop_current_inference()
 
         self._aborted = False # Reset for new input
         # source helps distinguish voice vs typing
@@ -518,10 +527,18 @@ class CognitiveEngine(QObject):
 
     def _start_thinking(self, text: str) -> None:
         """Internal helper to actually launch the LLM thread."""
+        if self._work_mode and not self._work_goal:
+            # Capture the first thing they say after Work Mode starts as their goal
+            self._work_goal = text
+            logger.info("Work goal captured: %s", self._work_goal)
+
         if self._aborted: # Check if user interrupted during the 1.5s pause
             self._aborted = False
             return
             
+        # Safety: ensure any previous thread is fully stopped
+        self._stop_current_inference()
+        
         self._is_thinking = True
         # b_thinking already published in _on_user_spoke
 
@@ -537,6 +554,7 @@ class CognitiveEngine(QObject):
             self._history.pop(0)
 
         self._thread = QThread()
+        self._thread.setObjectName("InferenceThread-User")
         self._worker = InferenceWorker(self._build_messages(), self._llm)
         self._worker.moveToThread(self._thread)
 
@@ -550,9 +568,39 @@ class CognitiveEngine(QObject):
 
         self._thread.start()
 
+    def _stop_current_inference(self) -> None:
+        """Helper to safely abort and join the current inference thread."""
+        if self._worker:
+            try:
+                self._worker.aborted = True
+            except RuntimeError:
+                self._worker = None
+
+        if self._thread:
+            try:
+                if self._thread.isRunning():
+                    logger.info("Stopping previous inference thread...")
+                    self._thread.quit()
+                    # Use a timeout just in case it's truly stuck, though llama-cpp usually responds fast
+                    if not self._thread.wait(2000):
+                        logger.warning("Thread did not stop in time, terminating.")
+                        self._thread.terminate()
+                        self._thread.wait()
+            except RuntimeError:
+                # Underlying C++ object already deleted by Qt's deleteLater()
+                pass
+            self._thread = None
+        self._is_thinking = False
+
     def _build_messages(self) -> list[dict[str, str]]:
+        system_content = SYSTEM_PROMPT
+        if self._work_mode:
+            system_content += WORK_MODE_PROMPT
+            if self._work_goal:
+                system_content += f"\n[The pal is working on: {self._work_goal}]"
+
         msgs: list[dict[str, str]] = [
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": system_content},
         ]
 
         if self._current_context:
@@ -616,6 +664,12 @@ class CognitiveEngine(QObject):
         if len(self._history) > self._MAX_HISTORY:
             self._history.pop(0)
 
+        # Handle silence request (especially in Work Mode)
+        if "[SILENT]" in result.upper():
+            logger.info("B: (Silent)")
+            self._is_thinking = False
+            return
+
         # Look for things to remember from the user's latest message
         if self._history and self._history[-2]["role"] == "user":
             self._extract_memory_facts(self._history[-2]["content"])
@@ -624,7 +678,7 @@ class CognitiveEngine(QObject):
         # but we still parse for debug/logging if needed.
         sentences = parse_sentences(result)
 
-        logger.debug("Response finished. Total sentences: %d", len(sentences))
+        logger.info("B: %s", result) # Output to console as requested
 
         # Publish full response for chat bubble display (raw tagged text)
         self._bus.publish("llm_response", {"text": result})

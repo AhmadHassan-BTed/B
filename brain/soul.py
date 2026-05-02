@@ -37,7 +37,7 @@ _VALID_EMOTIONS = {
     "delighted", "pouting", "nervous", "dizzy", "smug", "worried", "proud",
     "disgusted", "overwhelmed", "determined", "mischievous", "in_love",
     "electric", "pleading", "suspicious", "awestruck", "tired", "neutral",
-    "empathic", "sleeping"
+    "empathic", "sleeping", "elated", "assuring", "tease", "gentle", "supportive"
 }
 
 _EMOTION_ALIASES = {
@@ -57,6 +57,8 @@ _EMOTION_ALIASES = {
     "panicked": "overwhelmed",
     "yawning": "tired",
     "moray": "neutral", # From user logs
+    "elated": "delighted",
+    "assuring": "supportive",
 }
 
 def map_emotion(tag: str) -> str:
