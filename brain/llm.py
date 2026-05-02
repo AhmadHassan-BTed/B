@@ -265,6 +265,7 @@ def _extract_commitments(text: str) -> list[str]:
 class InferenceWorker(QObject):
     finished = pyqtSignal(str)
     chunk_ready = pyqtSignal(str)
+    sentence_ready = pyqtSignal(dict) # Emits {"emotion": str, "text": str}
 
     def __init__(self, messages: list[dict[str, str]], llm_instance: Any = None):
         super().__init__()
@@ -280,15 +281,17 @@ class InferenceWorker(QObject):
         try:
             stream = self.llm.create_chat_completion(
                 messages=self.messages,
-                max_tokens=120,        # Room for 3 tagged sentences
-                temperature=0.88,
-                top_p=0.92,
-                repeat_penalty=1.15,
+                max_tokens=120,
+                temperature=0.8,
+                top_p=0.9,
+                repeat_penalty=1.1,
                 stop=["User:", "B:", "System:", "\n\n"],
                 stream=True,
             )
 
             full_text = ""
+            current_buffer = ""
+            
             for chunk in stream:
                 if self.aborted:
                     logger.info("Inference worker aborted.")
@@ -298,12 +301,44 @@ class InferenceWorker(QObject):
                     content = delta.get("content", "")
                     if content:
                         full_text += content
+                        current_buffer += content
                         self.chunk_ready.emit(content)
+                        
+                        # Real-time sentence extraction
+                        # Look for a complete [TAG] sentence.
+                        # Sentences end with . ! or ? AND we look for the start of the NEXT tag or end of stream.
+                        if "[" in current_buffer and any(p in current_buffer for p in ".!?"):
+                            # Check if we have at least one full sentence [TAG] text.
+                            # We look for the pattern [TAG] text [ (the start of the next tag)
+                            # or just [TAG] text. if it ends with punctuation.
+                            match = re.search(r'\[([A-Z_]+)\]\s*(.*?[.!?])(?=\s*\[|$)', current_buffer, re.DOTALL)
+                            if match:
+                                tag = match.group(1).lower()
+                                text = match.group(2).strip()
+                                
+                                if tag not in _VALID_EMOTIONS:
+                                    tag = "neutral"
+                                    
+                                if text:
+                                    self.sentence_ready.emit({"emotion": tag, "text": text})
+                                    # Remove the processed sentence from the buffer
+                                    current_buffer = current_buffer[match.end():].strip()
 
             result = _strip_system_tokens(full_text)
+            
+            # Catch any leftover text in the buffer as a final sentence
+            if current_buffer.strip():
+                match = re.search(r'\[([A-Z_]+)\]\s*(.*)', current_buffer, re.DOTALL)
+                if match:
+                    tag = match.group(1).lower()
+                    text = match.group(2).strip()
+                    if tag not in _VALID_EMOTIONS: tag = "neutral"
+                    if text: self.sentence_ready.emit({"emotion": tag, "text": text})
+                elif current_buffer.strip():
+                    # No tag found in leftover? Default to neutral
+                    self.sentence_ready.emit({"emotion": "neutral", "text": current_buffer.strip()})
 
             if result and not result.startswith("["):
-                logger.warning("Model skipped tag format — patching: %s", result[:60])
                 result = f"[NEUTRAL] {result}"
 
             self.finished.emit(result)
@@ -317,8 +352,13 @@ class InferenceWorker(QObject):
 # COGNITIVE ENGINE
 # ──────────────────────────────────────────────────────────────────────────────
 
-class CognitiveEngine:
+class CognitiveEngine(QObject):
+    # Signals to bridge background threads to main thread (LLM/Qt)
+    start_thinking_signal = pyqtSignal(str)
+    proactive_thinking_signal = pyqtSignal()
+
     def __init__(self, bus: EventBus) -> None:
+        super().__init__()
         self._bus = bus
         self._llm = None
         self._worker: Optional[InferenceWorker] = None
@@ -334,6 +374,10 @@ class CognitiveEngine:
         
         self._MAX_HISTORY = 8
         self._MAX_COMMITMENTS = 10
+
+        # Connect the bridge signals
+        self.start_thinking_signal.connect(self._start_thinking)
+        self.proactive_thinking_signal.connect(self._trigger_inference)
 
         self._bus.subscribe("user_spoke", self._on_user_spoke, priority=50)
         self._bus.subscribe("context_updated", self._on_context_updated, priority=50)
@@ -419,7 +463,7 @@ class CognitiveEngine:
         
         # We inject this into the history as a system nudge
         self._history.append({"role": "system", "content": prompt})
-        self._trigger_inference()
+        self.proactive_thinking_signal.emit()
 
     def _trigger_inference(self) -> None:
         self._is_thinking = True
@@ -434,6 +478,7 @@ class CognitiveEngine:
 
         self._thread.started.connect(self._worker.run)
         self._worker.chunk_ready.connect(self._on_chunk_ready)
+        self._worker.sentence_ready.connect(self._on_sentence_ready)
         self._worker.finished.connect(self._on_inference_finished)
         self._worker.finished.connect(self._thread.quit)
         self._worker.finished.connect(self._worker.deleteLater)
@@ -467,9 +512,9 @@ class CognitiveEngine:
             # Natural pause for voice conversations
             logger.info("Voice detected - adding 1.5s natural pause before responding...")
             import threading
-            threading.Timer(1.5, lambda: self._start_thinking(text)).start()
+            threading.Timer(1.5, lambda: self.start_thinking_signal.emit(text)).start()
         else:
-            self._start_thinking(text)
+            self.start_thinking_signal.emit(text)
 
     def _start_thinking(self, text: str) -> None:
         """Internal helper to actually launch the LLM thread."""
@@ -497,6 +542,7 @@ class CognitiveEngine:
 
         self._thread.started.connect(self._worker.run)
         self._worker.chunk_ready.connect(self._on_chunk_ready)
+        self._worker.sentence_ready.connect(self._on_sentence_ready)
         self._worker.finished.connect(self._on_inference_finished)
         self._worker.finished.connect(self._thread.quit)
         self._worker.finished.connect(self._worker.deleteLater)
@@ -561,6 +607,10 @@ class CognitiveEngine:
     def _on_chunk_ready(self, chunk: str) -> None:
         self._bus.publish("llm_stream_chunk", {"text": chunk})
 
+    def _on_sentence_ready(self, sentence: dict) -> None:
+        """Published as soon as a single sentence is complete during streaming."""
+        self._bus.publish("llm_sentences", {"sentences": [sentence]})
+
     def _on_inference_finished(self, result: str) -> None:
         self._history.append({"role": "assistant", "content": result})
         if len(self._history) > self._MAX_HISTORY:
@@ -570,16 +620,13 @@ class CognitiveEngine:
         if self._history and self._history[-2]["role"] == "user":
             self._extract_memory_facts(self._history[-2]["content"])
 
-        # Parse into per-sentence (emotion, text) pairs
+        # No need to publish llm_sentences here anymore as they are streamed,
+        # but we still parse for debug/logging if needed.
         sentences = parse_sentences(result)
 
-        logger.debug("Response parsed into %d sentence(s): %s",
-                     len(sentences), [(s["emotion"], s["text"][:30]) for s in sentences])
+        logger.debug("Response finished. Total sentences: %d", len(sentences))
 
         # Publish full response for chat bubble display (raw tagged text)
         self._bus.publish("llm_response", {"text": result})
-
-        # Publish sentence list so audio/TTS can drive face changes per sentence
-        self._bus.publish("llm_sentences", {"sentences": sentences})
 
         self._is_thinking = False

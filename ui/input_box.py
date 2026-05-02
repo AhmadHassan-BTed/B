@@ -107,11 +107,16 @@ class InputBox(QWidget):
         """Partial results while user is still talking."""
         text = payload.get("text", "")
         if text:
+            logger.info("InputBox received user_hearing: '%s'", text)
             # Marshal to main thread since this comes from the background EarsSensor thread
             QTimer.singleShot(0, lambda: self._update_ui_text(text))
 
     def _update_ui_text(self, text: str) -> None:
-        self._line_edit.setText(text)
+        if self._speak_mode_active:
+            self._line_edit.setText(f"🎤 {text}")
+        else:
+            self._line_edit.setText(text)
+            
         if not self.isVisible():
             self.show()
 
@@ -125,7 +130,10 @@ class InputBox(QWidget):
         QTimer.singleShot(0, lambda: self._finalize_ui_text(text))
 
     def _finalize_ui_text(self, text: str) -> None:
-        self._line_edit.setText(text)
+        if self._speak_mode_active:
+            self._line_edit.setText(f"🎤 {text}")
+        else:
+            self._line_edit.setText(text)
         self.show()
         
         # In speak mode, we clear the text but KEEP the box visible
@@ -155,3 +163,4 @@ class InputBox(QWidget):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
         painter.fillRect(self.rect(), BG_COLOR)
         painter.end()
+        # logger.debug("InputBox painted")

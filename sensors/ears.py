@@ -13,6 +13,7 @@ import logging
 import threading
 import time
 import queue
+import random
 from typing import TYPE_CHECKING, Optional
 
 import numpy as np
@@ -31,7 +32,7 @@ MODEL_SIZE = "tiny.en"  # tiny.en is fast and accurate enough for English
 SAMPLE_RATE = 16000     # Whisper expects 16kHz
 CHANNELS = 1            # Mono
 CHUNK_SIZE = 1024       # Buffer size for sounddevice
-SILENCE_THRESHOLD = 0.02 # RMS threshold for "speech" vs "silence"
+SILENCE_THRESHOLD = 0.01 # RMS threshold for "speech" vs "silence"
 MIN_SPEECH_DURATION = 0.8 # Seconds of speech before we start transcribing
 MAX_BUFFER_DURATION = 10.0 # Maximum seconds to buffer
 
@@ -89,6 +90,12 @@ class EarsSensor:
         """This is called from the sounddevice input thread."""
         if status:
             logger.warning("Audio status: %s", status)
+        
+        # Periodic energy check (every ~1s)
+        if random.random() < 0.05:
+            rms = np.sqrt(np.mean(indata**2))
+            logger.debug("Incoming audio RMS: %.4f", rms)
+            
         self._audio_queue.put(indata.copy())
 
     def _listening_loop(self) -> None:
@@ -122,6 +129,8 @@ class EarsSensor:
                         is_currently_speaking = rms > SILENCE_THRESHOLD
                         
                         if is_currently_speaking:
+                            if not self._speech_detected:
+                                logger.info("Speech detected (RMS: %.4f)", rms)
                             self._speech_detected = True
                             self._silence_start = None
                         elif self._speech_detected:
@@ -133,11 +142,11 @@ class EarsSensor:
                                 self._finalize_transcription()
                                 continue
 
-                    # 4. Perform partial transcription for "real-time typing"
+                    # 4. Perform partial transcription for "real-time typing" (in background)
                     now = time.time()
                     if self._speech_detected and (now - self._last_transcription_time > self._transcription_interval):
-                        self._partial_transcription()
                         self._last_transcription_time = now
+                        threading.Thread(target=self._partial_transcription, daemon=True).start()
                     
                     time.sleep(0.05)
                     
@@ -148,7 +157,8 @@ class EarsSensor:
 
     def _partial_transcription(self):
         """Transcribe current buffer and fire 'user_hearing'."""
-        if len(self._buffer) < int(SAMPLE_RATE * MIN_SPEECH_DURATION):
+        # Partial feedback should be ultra-fast, so we start after only 0.3s of audio
+        if len(self._buffer) < int(SAMPLE_RATE * 0.3):
             return
             
         try:
@@ -157,14 +167,15 @@ class EarsSensor:
                 self._buffer, 
                 beam_size=1, 
                 language="en",
-                vad_filter=True,
-                vad_parameters=dict(min_speech_duration_ms=250)
+                vad_filter=False # More lenient for partials
             )
             
             text = " ".join([s.text for s in segments]).strip()
             if text:
-                logger.debug("Whisper hearing: %s", text)
+                logger.info("Ears published user_hearing: '%s'", text)
                 self._bus.publish("user_hearing", {"text": text})
+            else:
+                logger.debug("Ears partial transcription was empty")
         except Exception:
             pass # Ignore errors in partial transcription
 
