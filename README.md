@@ -1,6 +1,6 @@
 <div align="center">
 
-![B Hero Banner](file:///C:/Users/PMLS/.gemini/antigravity/brain/b085ecd0-b7d2-4141-96f3-f6d75a6a3d8b/b_hero_banner_1777792056381.png)
+![B Hero Banner](docs/assets/hero_banner.png)
 
 # ─── B ───
 ### *The Soul-Wired Desktop Companion*
@@ -34,7 +34,7 @@ B is designed as a **proactive desktop companion**. Using a 60fps event-driven "
 
 <div align="center">
 
-![B Feature Icons](file:///C:/Users/PMLS/.gemini/antigravity/brain/b085ecd0-b7d2-4141-96f3-f6d75a6a3d8b/b_feature_icons_1777792079263.png)
+![B Feature Icons](docs/assets/feature_icons.png)
 
 </div>
 
