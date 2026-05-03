@@ -38,7 +38,8 @@ _VALID_EMOTIONS = {
     "disgusted", "overwhelmed", "determined", "mischievous", "in_love",
     "electric", "pleading", "suspicious", "awestruck", "tired", "neutral",
     "empathic", "sleeping", "elated", "assuring", "tease", "gentle", "supportive",
-    "joking", "enthusiastic", "smile"
+    "joking", "enthusiastic", "smile", "encouraging", "insight", "analysis", "fully_engaged", "warm",
+    "soothing", "comforting", "reassuring", "steady", "calming", "softly"
 }
 
 # The Ultimate Fallback Net: Maps LLM hallucinations back to valid UI states
@@ -113,7 +114,7 @@ _EMOTION_ALIASES = {
     # Empathy / Pleading
     "sympathetic": "empathic", "compassionate": "empathic", "comforting": "assuring", 
     "understanding": "supportive", "begging": "pleading", "desperate": "pleading", 
-    "imploring": "pleading", "puppy_eyes": "pleading",
+    "imploring": "pleading", "puppy_eyes": "pleading", "encouraging": "supportive",
 
     # Disgust / Discomfort
     "grossed_out": "disgusted", "repulsed": "disgusted", "revolted": "disgusted", 
@@ -126,7 +127,9 @@ _EMOTION_ALIASES = {
     "calm": "neutral", "relaxed": "neutral", "composed": "neutral", 
     "chill": "neutral", "stoic": "neutral", "indifferent": "neutral", 
     "deadpan": "neutral", "moray": "neutral", "normal": "neutral", 
-    "quiet": "neutral"
+    "quiet": "neutral", "steady": "neutral", "calming": "neutral",
+    "soothing": "gentle", "comforting": "supportive", "reassuring": "confident",
+    "softly": "gentle"
 }
 
 def map_emotion(tag: str) -> str:

@@ -85,7 +85,7 @@ class AutonomyEngine:
 
     def _curiosity_loop(self):
         while self._running:
-            time.sleep(5.0)
+            time.sleep(1.0)
             
             if self._behavior_mode == "corner":
                 continue
@@ -95,16 +95,25 @@ class AutonomyEngine:
                 continue
 
             elapsed = time.monotonic() - self._last_activity_time
+            if elapsed > (self._target_interval - 2.0) and elapsed < self._target_interval:
+                # Force a fresh scan right before B "thinks"
+                if self._work_mode:
+                    logger.info("🧠 Preparing screen analysis...")
+                self._bus.publish("request_vision_refresh", {})
+
             if elapsed > self._target_interval:
                 if self._latest_context:
-                    logger.info("Triggering proactive thought (Work Mode: %s)", self._work_mode)
+                    app_type = self._latest_context.get("app_type", "unknown")
+                    logger.info("Triggering proactive thought (Work Mode: %s, App: %s)", self._work_mode, app_type)
                     self._bus.publish("trigger_proactive_thought", {
                         "context": self._latest_context,
                         "mode": "work" if self._work_mode else self._behavior_mode
                     })
                     self._reset_timer()
                 else:
-                    pass
+                    if self._work_mode:
+                        logger.warning("Skipping proactive thought: No screen context available yet.")
+                    self._reset_timer() # Reset anyway so we don't spam warnings
 
     def stop(self):
         self._running = False

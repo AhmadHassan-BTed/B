@@ -14,7 +14,6 @@ Architecture:
     5. Start a QTimer at 60fps that publishes "tick" events
     6. Register a global kill switch (Ctrl+Shift+Alt+Q)
     7. Enter Qt's event loop — B is alive
-
 No module knows about any other module. They only know the bus.
 The main loop is the only place where all modules are referenced,
 and only for instantiation — never for cross-module calls.
@@ -25,6 +24,9 @@ from __future__ import annotations
 import logging
 import sys
 import time
+import os
+
+os.environ["QT_LOGGING_RULES"] = "qt.qpa.window=false"
 
 from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtGui import QKeySequence, QShortcut
@@ -146,11 +148,16 @@ def main() -> None:
     llm = CognitiveEngine(bus)
 
     # 4f. The eyes — semantic UI extraction
-    vision = SemanticVisionSensor(bus)
-    vision.start()
+    vision_semantic = SemanticVisionSensor(bus)
+    vision_semantic.start()
     
-    # 4g. The focus — active window tracking
+    # 4f-2. The eyes — OCR fallback (mss)
+    from vision.mss_capture import VisionSensor as OCRVision
+    vision_ocr = OCRVision(bus)
+    
+    # 4g. The focus — active window tracking (hook-based)
     window_tracker = WindowTracker(bus)
+    window_tracker.start()
 
     # 4h. The brain's clock — curiosity and proactivity
     autonomy = AutonomyEngine(bus)

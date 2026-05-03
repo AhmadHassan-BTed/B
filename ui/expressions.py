@@ -616,3 +616,5 @@ draw_sleepy = draw_sleeping
 draw_joking = draw_mischievous
 draw_enthusiastic = draw_excited
 draw_smile = draw_happy
+draw_analysis = draw_thinking
+draw_insight = draw_focused
