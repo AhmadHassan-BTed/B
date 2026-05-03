@@ -35,7 +35,7 @@ logger = logging.getLogger("B.audio.speaker")
 
 # Ensure MODEL_PATH is absolute relative to this file's location
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MODEL_PATH = os.path.join(BASE_DIR, "models", "b_voice.onnx")
+MODEL_PATH = os.path.join(BASE_DIR, "voices", "b_voice.onnx")
 
 # =====================================================================
 # DSP CONFIGURATION - TUNABLE PARAMETERS FOR B's ROBOT VOICE

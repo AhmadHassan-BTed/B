@@ -16,15 +16,15 @@ except ImportError:
 
 # Ensure absolute paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODELS_DIR = os.path.join(BASE_DIR, "models")
-os.makedirs(MODELS_DIR, exist_ok=True)
+VOICES_DIR = os.path.join(BASE_DIR, "voices")
+os.makedirs(VOICES_DIR, exist_ok=True)
 
 # The single perfect voice for the Robo-DSP pipeline (High pitched, bright, energetic)
 URL_ONNX = "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_GB/jenny_dioco/medium/en_GB-jenny_dioco-medium.onnx"
 URL_JSON = "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_GB/jenny_dioco/medium/en_GB-jenny_dioco-medium.onnx.json"
 
-dest_onnx = os.path.join(MODELS_DIR, "b_voice.onnx")
-dest_json = os.path.join(MODELS_DIR, "b_voice.onnx.json")
+dest_onnx = os.path.join(VOICES_DIR, "b_voice.onnx")
+dest_json = os.path.join(VOICES_DIR, "b_voice.onnx.json")
 
 def download_with_curl(url: str, dest: str):
     print(f"Downloading {os.path.basename(dest)} using curl...")

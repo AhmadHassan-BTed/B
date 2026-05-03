@@ -2,15 +2,15 @@ import os
 import sys
 import urllib.request
 
-MODELS_DIR = "models"
-os.makedirs(MODELS_DIR, exist_ok=True)
+VOICES_DIR = "voices"
+os.makedirs(VOICES_DIR, exist_ok=True)
 
 # Using Ryan High (Clear, Human-like with a slight robotic cadence)
 URL_ONNX = "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/ryan/high/en_US-ryan-high.onnx?download=true"
 URL_JSON = "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/ryan/high/en_US-ryan-high.onnx.json?download=true"
 
-dest_onnx = os.path.join(MODELS_DIR, "b_voice.onnx")
-dest_json = os.path.join(MODELS_DIR, "b_voice.onnx.json")
+dest_onnx = os.path.join(VOICES_DIR, "b_voice.onnx")
+dest_json = os.path.join(VOICES_DIR, "b_voice.onnx.json")
 
 def download_file(url, dest):
     print(f"Downloading {dest}...")
