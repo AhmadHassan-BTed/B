@@ -9,6 +9,7 @@ __pycache__/
 models/*.gguf
 models/*.onnx
 models/*.json
+voices/
 
 # Dynamic Memory/State (Keeps your local B's memory out of version control)
 brain/memory.json
