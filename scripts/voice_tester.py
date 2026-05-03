@@ -13,8 +13,11 @@ except ImportError:
     print("Please run: pip install piper-tts sounddevice numpy scipy pedalboard")
     sys.exit(1)
 
-MODELS_DIR = "models"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MODELS_DIR = os.path.join(BASE_DIR, "models")
+VOICES_DIR = os.path.join(BASE_DIR, "voices")
 os.makedirs(MODELS_DIR, exist_ok=True)
+os.makedirs(VOICES_DIR, exist_ok=True)
 
 # The 3 Curated "Cute/Expressive" Voices for B
 VOICES = {
@@ -138,8 +141,8 @@ def main():
                 source_onnx = os.path.join(MODELS_DIR, VOICES[choice]["file"])
                 source_json = source_onnx + ".json"
                 
-                dest_onnx = os.path.join(MODELS_DIR, "b_voice.onnx")
-                dest_json = os.path.join(MODELS_DIR, "b_voice.onnx.json")
+                dest_onnx = os.path.join(VOICES_DIR, "b_voice.onnx")
+                dest_json = os.path.join(VOICES_DIR, "b_voice.onnx.json")
                 
                 shutil.copy2(source_onnx, dest_onnx)
                 shutil.copy2(source_json, dest_json)

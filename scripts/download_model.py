@@ -3,7 +3,8 @@ import urllib.request
 import sys
 
 URL = "https://huggingface.co/microsoft/Phi-3-mini-4k-instruct-gguf/resolve/main/Phi-3-mini-4k-instruct-q4.gguf"
-DEST_DIR = "models"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEST_DIR = os.path.join(BASE_DIR, "models")
 DEST_PATH = os.path.join(DEST_DIR, "phi-3-mini-4k-instruct-q4.gguf")
 
 os.makedirs(DEST_DIR, exist_ok=True)

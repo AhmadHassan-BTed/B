@@ -17,7 +17,7 @@ from PIL import Image
 if sys.platform == "win32":
     import pygetwindow as gw
 
-logger = logging.getLogger("B.sensors.vision")
+logger = logging.getLogger("B.vision.capture")
 
 class VisionSensor:
     def __init__(self, bus):

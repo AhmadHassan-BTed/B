@@ -73,7 +73,7 @@ from faster_whisper import WhisperModel
 if TYPE_CHECKING:
     from core.bus import EventBus
 
-logger = logging.getLogger("B.sensors.ears")
+logger = logging.getLogger("B.audio.ears")
 
 
 # ══════════════════════════════════════════════════════════════════════

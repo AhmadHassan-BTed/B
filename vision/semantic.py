@@ -15,7 +15,7 @@ from typing import Optional
 
 import uiautomation as auto
 
-logger = logging.getLogger("B.sensors.semantic_vision")
+logger = logging.getLogger("B.vision.semantic")
 
 class SemanticVisionSensor:
     def __init__(self, bus, check_interval: int = 3):

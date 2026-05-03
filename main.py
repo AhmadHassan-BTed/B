@@ -40,12 +40,12 @@ from ui.overlay import WindowManager
 from brain.llm import CognitiveEngine
 from brain.soul import StateMachine
 from brain.autonomy_loop import AutonomyEngine
-from sensors.vision_semantic import SemanticVisionSensor
+from vision.semantic import SemanticVisionSensor
 from sensors.window_tracker import WindowTracker
 from audio.speaker import VoiceEngine
 from ui.chat import ChatBubble
 from ui.input_box import InputBox
-from sensors.ears import EarsSensor
+from audio.ears import EarsSensor
 
 # ──────────────────────────────────────────────────────────────────────
 # Logging configuration — structured logging for all modules.
