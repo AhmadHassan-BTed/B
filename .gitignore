@@ -1,0 +1,21 @@
+# Python Cache
+__pycache__/
+*.pyc
+
+# Python Packages/Installers
+*.whl
+
+# Massive AI Models (Do not push these to GitHub!)
+models/*.gguf
+models/*.onnx
+models/*.json
+
+# Dynamic Memory/State (Keeps your local B's memory out of version control)
+brain/memory.json
+
+# Scratch/Test files (Optional: uncomment if you don't want to track your scratchpad)
+# scratch/
+
+# Virtual Environments (If you ever create one)
+venv/
+.env/
