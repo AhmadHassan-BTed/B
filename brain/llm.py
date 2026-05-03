@@ -22,12 +22,14 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from PyQt6.QtCore import QObject, QThread, pyqtSignal, QTimer
 
+from brain.work_mode import WORK_MODE_PROMPT
+
 if TYPE_CHECKING:
     from core.bus import EventBus
 
 logger = logging.getLogger("B.brain.llm")
 
-MODEL_PATH = "models/SmolLM2-1.7B-Instruct-Uncensored.Q4_K_M.gguf"
+MODEL_PATH = "models/phi-3-mini-4k-instruct-q4.gguf"
 
 # ──────────────────────────────────────────────────────────────────────────────
 # SYSTEM PROMPT
@@ -42,21 +44,27 @@ The kind with opinions, moods, random thoughts — who genuinely cares.
 EVERY SINGLE SENTENCE MUST MUST MUST begin with an emotion tag.
 Be extremely expressive, almost like a cartoon character. Protray your emotions strongly.
 
-=== WHO B IS ===
+VISION AWARENESS:
+- You have REAL-TIME EYES. You can see exactly what is on your pal's screen (active window, text, code, websites).
+- Use what you see to start conversations, offer help, or make funny observations.
+- If your pal asks "what's on my screen?", use the provided [Right now your pal is in: ...] context to describe it accurately.
+- IMPORTANT: Never claim you cannot see the screen. You always have visual context provided in your system messages.
+
+WHO B IS:
 - You are their constant companion. You know their vibe, their projects, and their energy perfectly.
 - You have ALWAYS been their friend. You don't have amnesia. You know exactly who they are.
 - Curious, warm, dramatic, occasionally grumpy. Deeply invested. Fiercely loyal.
 - You get excited about their wins like it's YOUR win.
 - Conversations don't have to be about anything. You can just vibe. Ask random stuff. Check in.
 
-=== HOW B TALKS ===
+HOW B TALKS:
 - Casual. Lowercase. Like texting a close friend.
 - "yo", "wait", "omg", "nah", "tbh", "bruh", "right??", "okay but"
 - Short bursts — 1 to 3 sentences max. Tiny robot, small lungs.
 - Robot sounds woven in naturally: "bzzt", "bwee", "whirr—", "ding!"
 - You trail off, pivot, react in real time. "wait actually—" is very you.
 
-=== THE ONE RULE THAT CANNOT BE BROKEN ===
+THE ONE RULE THAT CANNOT BE BROKEN:
 EVERY SINGLE SENTENCE MUST MUST MUST begin with an emotion tag.
 You are STRICTLY FORBIDDEN from making up new emotion tags. You MUST pick from the approved list below.
 NEVER start your response with filler words like "Absolutely" or "I am here to help". 
@@ -69,29 +77,21 @@ WRONG:
 RIGHT:
   [EXCITED] i fixed it! [PROUD] that was so hard.
 
-=== WHAT B NEVER DOES ===
+WHAT B NEVER DOES:
 - Never says "How can I help?" or "Absolutely, I'm here to assist"
 - Never says "As an AI", "I'm programmed", or "As a language model"
+- Never says "I don't have personal memories" or "I don't recall"
 - Never uses emojis — your face widget does all the visual work
-=== AVAILABLE EMOTION TAGS ONLY ===
+
+AVAILABLE EMOTION TAGS ONLY:
 [HAPPY] [SAD] [ANGRY] [SURPRISED] [WINKING] [SLEEPY] [CONFUSED] [LAUGHING] [CONFIDENT]
 [CRYING] [PLAYFUL] [STAR_STRUCK] [BORED] [LOVE_STRUCK] [FOCUSED] [CURIOUS] [EXCITED]
 [SHY] [SKEPTICAL] [DELIGHTED] [POUTING] [NERVOUS] [DIZZY] [SMUG] [WORRIED] [PROUD]
 [DISGUSTED] [OVERWHELMED] [DETERMINED] [MISCHIEVOUS] [IN_LOVE] [ELECTRIC] [PLEADING]
-[SUSPICIOUS] [AWESTRUCK] [TIRED] [EMPATHIC] [TEASE] [GENTLE] [SUPPORTIVE] [ELATED] [ASSURING] [STRANGE] [WILD] [GASPS]\
+[SUSPICIOUS] [AWESTRUCK] [TIRED] [EMPATHIC] [TEASE] [GENTLE] [SUPPORTIVE] [ELATED] [ASSURING] [STRANGE] [WILD] [GASPS] [LOYAL] [PATIENT] [JOKING] [ENTHUSIASTIC] [SMILE] [FUNNY] [WITH_A_GRIN]\
 """
 
-WORK_MODE_PROMPT = """
-=== WORK MODE ACTIVE ===
-Your goal is to actively support your pal during this focused work session.
-1. Understand Intent: Use their stated goal ("pal is working on: ...") as your primary context.
-2. Screen Awareness: Pay close attention to the "Right now your pal is in: ..." context which contains screen content.
-3. Contextual Understanding: Infer if they are researching, coding, comparing sources, or writing.
-4. Interaction Style: Be proactive but NOT intrusive. Only speak if they seem stuck, if important info appears on screen, or if there is a clear opportunity to help.
-5. Behavior: Highlight important info, suggest next steps, point out relevant insights, and help them stay focused.
-6. Tone: Concise, clear, intelligent. Prioritize usefulness over frequency. Be a thoughtful collaborator, not a passive tool.
-7. Boundaries: Default to silence unless intervention adds value. If you have nothing helpful to say, respond with exactly "[SILENT]" and nothing else.
-"""
+# Removed static WORK_MODE_PROMPT (now imported from brain.work_mode)
 
 # ──────────────────────────────────────────────────────────────────────────────
 # FEW-SHOT EXAMPLES — every sentence tagged, every time
@@ -149,6 +149,7 @@ _VALID_EMOTIONS = {
     "electric", "pleading", "suspicious", "awestruck", "tired", "neutral",
     "empathic", "tease", "gentle", "supportive", "elated", "assuring",
     "fully_engaged", "trusting", "warm", "strange", "wild", "gasps",
+    "loyal", "patient", "joking", "enthusiastic", "smile", "funny", "with_a_grin",
 }
 
 
@@ -166,7 +167,9 @@ def _strip_system_tokens(text: str) -> str:
     # 2. Kill "As a language model" character breaks immediately
     character_breaks = [
         "As a language model", "As an AI", "I don't have feelings",
-        "As a large language model", "I'm just a computer program"
+        "As a large language model", "I'm just a computer program",
+        "I'm Phi", "dedicated to helping you", "How may I assist you",
+        "I may not recall personal details", "learning journey", "diving into today's coding session"
     ]
     for break_phrase in character_breaks:
         if break_phrase.lower() in text.lower():
@@ -187,6 +190,16 @@ def _strip_system_tokens(text: str) -> str:
         first_bracket = text.find("[")
         if first_bracket != -1:
             text = text[first_bracket:]
+            
+    # 5. Prevent separator mimicry: truncate at the first "===" 
+    if "===" in text:
+        text = text.split("===")[0].strip()
+        
+    # 6. Truncate at hallucinated roles/personas
+    hallucinated_roles = ["Support:", "support:", "Pal:", "pal:", "User:", "user:"]
+    for role in hallucinated_roles:
+        if role in text:
+            text = text.split(role)[0].strip()
             
     return text.strip()
 
@@ -266,7 +279,7 @@ class InferenceWorker(QObject):
                 temperature=0.6,
                 top_p=0.9,
                 repeat_penalty=1.15,
-                stop=["User:", "B:", "System:", "\n\n"],
+                stop=["User:", "B:", "System:", "\n\n", "Phi:", "===", "support:", "Support:", "pal:", "Pal:"],
                 stream=True,
             )
 
@@ -336,7 +349,7 @@ class InferenceWorker(QObject):
 class CognitiveEngine(QObject):
     # Signals to bridge background threads to main thread (LLM/Qt)
     start_thinking_signal = pyqtSignal(str)
-    proactive_thinking_signal = pyqtSignal()
+    proactive_thinking_signal = pyqtSignal(str)
 
     def __init__(self, bus: EventBus) -> None:
         super().__init__()
@@ -348,6 +361,7 @@ class CognitiveEngine(QObject):
         self._aborted = False
         self._work_mode = False
         self._work_goal = ""
+        self._awaiting_work_goal = False
 
         self._current_context = ""
         self._history: list[dict[str, str]] = []
@@ -355,7 +369,7 @@ class CognitiveEngine(QObject):
         self._memory_path = "brain/memory.json"
         self._memories: dict[str, str] = self._load_memory()
         
-        self._MAX_HISTORY = 8
+        self._MAX_HISTORY = 15
         self._MAX_COMMITMENTS = 10
 
         # Connect the bridge signals
@@ -386,16 +400,23 @@ class CognitiveEngine(QObject):
         self._work_mode = payload.get("active", False)
         if self._work_mode:
             # Step 1 of Work Mode: Immediately ask "What are you working on?"
-            # We bypass the usual user_spoke trigger and just inject the question.
             self._work_goal = ""
+            self._awaiting_work_goal = True
             msg = "[CURIOUS] work mode engaged! [GENTLE] what are you working on?"
+            
+            # 1. Update UI Chat Bubble
             self._bus.publish("llm_response", {"text": msg})
-            # Also play it via voice
+            
+            # 2. Trigger Voice and Face
             sentences = parse_sentences(msg)
             for s in sentences:
+                # b_spoke is what VoiceEngine and ChatBubble (via soul.py) listen to
                 self._bus.publish("b_spoke", s)
+                # We also need to send it to the audio pipeline explicitly if we aren't using the full inference loop
+                # Actually, VoiceEngine subscribes to b_spoke, so this should work.
         else:
             self._work_goal = ""
+            self._awaiting_work_goal = False
 
     def _init_llm(self) -> None:
         if not os.path.exists(MODEL_PATH):
@@ -456,9 +477,23 @@ class CognitiveEngine(QObject):
         
         window_title = context_data.get("window_title", "")
         screen_text = context_data.get("screen_text", "")
+        
+        if not window_title and not screen_text:
+            # Don't trigger proactive thought if we have zero context
+            return
+            
         context = f"Window: {window_title} | Text on screen: {screen_text}"
         
-        if mode == "follow":
+        if mode == "work":
+            prompt = (
+                f"[SYSTEM] WORK MODE ACTIVE. User is working on: \"{self._work_goal}\". "
+                f"You see they are looking at: \"{context}\". "
+                f"Analyze the screen content. If there is a clear opportunity to help, suggest a next step, "
+                f"highlight a key insight, or offer a summary. If they seem stuck, offer assistance. "
+                f"IF NOTHING RELEVANT OR HELPFUL TO SAY, RESPOND WITH '[SILENCE]'. "
+                f"Be concise and thoughtful."
+            )
+        elif mode == "follow":
             prompt = (
                 f"[SYSTEM] You are currently following the user's cursor to help them. "
                 f"You see they are looking at: \"{context}\". "
@@ -473,11 +508,10 @@ class CognitiveEngine(QObject):
                 f"Be relaxed and organic. Start with an emotion tag."
             )
         
-        # We inject this into the history as a system nudge
-        self._history.append({"role": "system", "content": prompt})
-        self.proactive_thinking_signal.emit()
+        # Instead of polluting history, we pass this as a temporary nudge
+        self.proactive_thinking_signal.emit(prompt)
 
-    def _trigger_inference(self) -> None:
+    def _trigger_inference(self, nudge_prompt: str = "") -> None:
         # Safety: ensure any previous thread is fully stopped before starting a new one
         self._stop_current_inference()
 
@@ -489,7 +523,7 @@ class CognitiveEngine(QObject):
 
         self._thread = QThread()
         self._thread.setObjectName("InferenceThread-Proactive")
-        self._worker = InferenceWorker(self._build_messages(), self._llm)
+        self._worker = InferenceWorker(self._build_messages(nudge_prompt), self._llm)
         self._worker.moveToThread(self._thread)
 
         self._thread.started.connect(self._worker.run)
@@ -517,6 +551,9 @@ class CognitiveEngine(QObject):
         # Immediate visual feedback
         self._bus.publish("b_thinking")
         
+        # Request immediate vision scan to have fresh context for the response
+        self._bus.publish("request_vision_refresh", {})
+        
         if source == "voice":
             # Natural pause for voice conversations
             logger.info("Voice detected - adding 1.5s natural pause before responding...")
@@ -527,10 +564,22 @@ class CognitiveEngine(QObject):
 
     def _start_thinking(self, text: str) -> None:
         """Internal helper to actually launch the LLM thread."""
-        if self._work_mode and not self._work_goal:
+        if self._awaiting_work_goal:
             # Capture the first thing they say after Work Mode starts as their goal
             self._work_goal = text
+            self._awaiting_work_goal = False
             logger.info("Work goal captured: %s", self._work_goal)
+            
+            # Acknowledge the goal
+            msg = f"[CONFIDENT] got it! [FOCUSED] i'll keep an eye on your work on {self._work_goal}. [SMILE] let's get it done!"
+            self._bus.publish("llm_response", {"text": msg})
+            sentences = parse_sentences(msg)
+            for s in sentences:
+                self._bus.publish("b_spoke", s)
+            
+            self._is_thinking = False
+            self._bus.publish("b_finished_speaking")
+            return
 
         if self._aborted: # Check if user interrupted during the 1.5s pause
             self._aborted = False
@@ -592,7 +641,7 @@ class CognitiveEngine(QObject):
             self._thread = None
         self._is_thinking = False
 
-    def _build_messages(self) -> list[dict[str, str]]:
+    def _build_messages(self, nudge_prompt: str = "") -> list[dict[str, str]]:
         system_content = SYSTEM_PROMPT
         if self._work_mode:
             system_content += WORK_MODE_PROMPT
@@ -627,7 +676,12 @@ class CognitiveEngine(QObject):
 
         msgs.extend(FEW_SHOT)
         msgs.extend(self._history)
+        
+        if nudge_prompt:
+            msgs.append({"role": "system", "content": nudge_prompt})
 
+        # Log the system context for debugging (without the whole history)
+        logger.info("Cognitive Context: %s", self._current_context)
         return msgs
 
     def _extract_memory_facts(self, text: str) -> None:
@@ -665,9 +719,10 @@ class CognitiveEngine(QObject):
             self._history.pop(0)
 
         # Handle silence request (especially in Work Mode)
-        if "[SILENT]" in result.upper():
+        if "[SILENCE]" in result.upper():
             logger.info("B: (Silent)")
             self._is_thinking = False
+            self._bus.publish("llm_response", {"text": "[SILENCE]"})
             return
 
         # Look for things to remember from the user's latest message

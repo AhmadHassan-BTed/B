@@ -98,7 +98,7 @@ class ChatBubble(QWidget):
         self._bus.subscribe("position_updated", self._on_position_updated, priority=50)
 
         self.hide() # Hidden initially
-        logger.info("ChatBubble initialized")
+        # logger.info("ChatBubble initialized")
 
     def initialize(self) -> None:
         self._apply_click_through()
@@ -120,6 +120,16 @@ class ChatBubble(QWidget):
             dwm.DwmSetWindowAttribute(hwnd, 33, ctypes.byref(val2), 4)
         except Exception:
             pass
+        self._enforce_topmost()
+
+    def _enforce_topmost(self) -> None:
+        if not _HAS_WIN32:
+            return
+        hwnd = int(self.winId())
+        win32gui.SetWindowPos(
+            hwnd, win32con.HWND_TOPMOST, 0, 0, 0, 0,
+            win32con.SWP_NOMOVE | win32con.SWP_NOSIZE | win32con.SWP_NOACTIVATE
+        )
 
     def _on_b_playing_sentence(self, payload: dict) -> None:
         text = payload.get("text", "")
@@ -143,12 +153,12 @@ class ChatBubble(QWidget):
         self.update() # Trigger repaint for border color change
             
     def _on_b_finished_speaking(self, payload: dict) -> None:
-        logger.info("ChatBubble received b_finished_speaking. Emitting fade_signal.")
+        # logger.info("ChatBubble received b_finished_speaking. Emitting fade_signal.")
         # Emit signal to ensure we start the QTimer on the main GUI thread!
         self._fade_signal.emit()
         
     def _do_start_fade_timer(self) -> None:
-        logger.info("ChatBubble _do_start_fade_timer called. Starting 2000ms timer.")
+        # logger.info("ChatBubble _do_start_fade_timer called. Starting 2000ms timer.")
         # Start fading out 2 seconds after the voice finishes
         if self._label.text() != "...":
             self._fade_timer.start(2000)
@@ -184,7 +194,7 @@ class ChatBubble(QWidget):
         self.show()
 
     def _start_fade_out(self) -> None:
-        logger.info("ChatBubble _start_fade_out called! Animating opacity to 0.0")
+        # logger.info("ChatBubble _start_fade_out called! Animating opacity to 0.0")
         self._fade_anim.setStartValue(1.0)
         self._fade_anim.setEndValue(0.0)
         self._fade_anim.start()
@@ -212,6 +222,7 @@ class ChatBubble(QWidget):
             y = self._b_pos.y() - self.height() - Y_OFFSET
 
         self.move(x, y)
+        self._enforce_topmost()
 
     def paintEvent(self, event: QPaintEvent) -> None:
         painter = QPainter(self)

@@ -37,11 +37,11 @@ from PyQt6.QtWidgets import QApplication
 from core.bus import EventBus
 from physics.kinematics import KinematicsEngine
 from ui.overlay import WindowManager
-from ui.face import FaceRenderer
-from brain.soul import StateMachine
 from brain.llm import CognitiveEngine
-from sensors.vision import VisionSensor
-from brain.autonomy import AutonomyEngine
+from brain.soul import StateMachine
+from brain.autonomy_loop import AutonomyEngine
+from sensors.vision_semantic import SemanticVisionSensor
+from sensors.window_tracker import WindowTracker
 from audio.speaker import VoiceEngine
 from ui.chat import ChatBubble
 from ui.input_box import InputBox
@@ -132,6 +132,7 @@ def main() -> None:
     window = WindowManager(bus)
 
     # 4c. The face — rendered as a child widget inside the window
+    from ui.face import FaceRenderer
     face = FaceRenderer(bus, parent=window)
 
     # 4d. The chat bubble and input box
@@ -144,10 +145,14 @@ def main() -> None:
     # 4f. The brain — LLM inference
     llm = CognitiveEngine(bus)
 
-    # 4g. The eyes — screen reading vision
-    vision = VisionSensor(bus)
+    # 4f. The eyes — semantic UI extraction
+    vision = SemanticVisionSensor(bus)
+    vision.start()
+    
+    # 4g. The focus — active window tracking
+    window_tracker = WindowTracker(bus)
 
-    # 4h. The curiosity engine — proactive thoughts
+    # 4h. The brain's clock — curiosity and proactivity
     autonomy = AutonomyEngine(bus)
 
     # 4i. The voice — local TTS

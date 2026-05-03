@@ -105,6 +105,17 @@ class WindowManager(QWidget):
             pass
 
         logger.info("Click-through applied (HWND=0x%08X)", hwnd)
+        self._enforce_topmost()
+
+    def _enforce_topmost(self) -> None:
+        if not _HAS_WIN32:
+            return
+        hwnd = int(self.winId())
+        win32gui.SetWindowPos(
+            hwnd, win32con.HWND_TOPMOST, 0, 0, 0, 0,
+            win32con.SWP_NOMOVE | win32con.SWP_NOSIZE | win32con.SWP_NOACTIVATE
+        )
 
     def _on_position_updated(self, payload: dict) -> None:
         self.move(int(payload["x"]), int(payload["y"]))
+        self._enforce_topmost()

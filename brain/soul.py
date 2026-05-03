@@ -37,28 +37,96 @@ _VALID_EMOTIONS = {
     "delighted", "pouting", "nervous", "dizzy", "smug", "worried", "proud",
     "disgusted", "overwhelmed", "determined", "mischievous", "in_love",
     "electric", "pleading", "suspicious", "awestruck", "tired", "neutral",
-    "empathic", "sleeping", "elated", "assuring", "tease", "gentle", "supportive"
+    "empathic", "sleeping", "elated", "assuring", "tease", "gentle", "supportive",
+    "joking", "enthusiastic", "smile"
 }
 
+# The Ultimate Fallback Net: Maps LLM hallucinations back to valid UI states
 _EMOTION_ALIASES = {
-    "frustrated": "angry",
-    "irritated": "angry",
-    "irate": "angry",
-    "annoyed": "angry",
-    "angry_voice": "angry",
-    "furious": "angry",
-    "loving": "love_struck",
-    "affectionate": "love_struck",
-    "sweet": "love_struck",
-    "with_love": "love_struck",
-    "puzzled": "confused",
-    "questioning": "confused",
-    "scared": "nervous",
-    "panicked": "overwhelmed",
-    "yawning": "tired",
-    "moray": "neutral", # From user logs
-    "elated": "delighted",
-    "assuring": "supportive",
+    # Anger / Frustration
+    "frustrated": "angry", "irritated": "angry", "irate": "angry", 
+    "annoyed": "angry", "angry_voice": "angry", "furious": "angry", 
+    "mad": "angry", "enraged": "angry", "pissed": "angry", "livid": "angry",
+    "outraged": "angry", "grumpy": "pouting", "sullen": "pouting", 
+    "sulking": "pouting", "bitter": "angry",
+
+    # Happiness / Joy
+    "joyful": "happy", "glad": "happy", "cheerful": "happy", "upbeat": "happy",
+    "grinning": "smile", "beaming": "delighted", "content": "smile", 
+    "pleased": "proud", "thrilled": "elated", "ecstatic": "elated", 
+    "with_a_grin": "smile", "warm": "gentle", "radiant": "happy",
+
+    # Love / Affection
+    "loving": "love_struck", "affectionate": "love_struck", "sweet": "love_struck", 
+    "with_love": "love_struck", "adoring": "love_struck", "smitten": "in_love", 
+    "fond": "gentle", "caring": "supportive", "tender": "gentle",
+
+    # Sadness / Grief
+    "depressed": "sad", "down": "sad", "melancholy": "sad", "upset": "sad", 
+    "gloomy": "sad", "sorrowful": "sad", "heartbroken": "crying",
+    "weeping": "crying", "sobbing": "crying", "tearing_up": "crying", 
+    "bawling": "crying", "devastated": "crying", "miserable": "sad",
+
+    # Fear / Anxiety
+    "scared": "nervous", "panicked": "overwhelmed", "anxious": "worried", 
+    "apprehensive": "nervous", "tense": "nervous", "uneasy": "worried", 
+    "fretful": "worried", "stressed": "overwhelmed", "freaking_out": "overwhelmed",
+    "terrified": "nervous", "fearful": "nervous",
+
+    # Confusion / Surprise
+    "puzzled": "confused", "questioning": "confused", "perplexed": "confused", 
+    "baffled": "confused", "lost": "confused", "unsure": "confused", 
+    "bewildered": "confused", "shocked": "surprised", "startled": "surprised", 
+    "astonished": "surprised", "stunned": "surprised", "gasping": "surprised", 
+    "speechless": "awestruck", "amazed": "awestruck", "fascinated": "star_struck",
+    "mesmerized": "star_struck",
+
+    # Humor / Playfulness
+    "funny": "laughing", "chuckling": "laughing", "giggling": "laughing", 
+    "lmao": "laughing", "rofl": "laughing", "cracking_up": "laughing", 
+    "amused": "smile", "kidding": "joking", "cheeky": "mischievous", 
+    "sly": "smug", "sneaky": "mischievous", "teasing": "tease", 
+    "smirking": "smug", "sarcy": "smug", "sarcastic": "smug",
+
+    # Fatigue / Boredom
+    "yawning": "tired", "exhausted": "tired", "drowsy": "sleepy", 
+    "fatigued": "tired", "weary": "tired", "sluggish": "tired", 
+    "uninterested": "bored", "meh": "bored", "apathetic": "bored", 
+    "dull": "bored", "drained": "tired",
+
+    # Confidence / Focus
+    "sure": "confident", "certain": "confident", "bold": "confident", 
+    "brave": "determined", "fearless": "determined", "cocky": "smug", 
+    "arrogant": "smug", "gloating": "smug", "conceited": "smug",
+    "concentrating": "focused", "serious": "focused", "intense": "determined", 
+    "resolute": "determined", "driven": "determined", "intent": "focused",
+
+    # Curiosity / Suspicion
+    "intrigued": "curious", "inquiring": "curious", "nosy": "curious", 
+    "probing": "curious", "doubtful": "skeptical", "doubting": "skeptical", 
+    "unconvinced": "skeptical", "wary": "suspicious", "distrustful": "suspicious",
+
+    # Energy / Excitement
+    "pumped": "enthusiastic", "stoked": "electric", "hyped": "electric", 
+    "eager": "excited", "animated": "excited", "hyper": "electric",
+
+    # Empathy / Pleading
+    "sympathetic": "empathic", "compassionate": "empathic", "comforting": "assuring", 
+    "understanding": "supportive", "begging": "pleading", "desperate": "pleading", 
+    "imploring": "pleading", "puppy_eyes": "pleading",
+
+    # Disgust / Discomfort
+    "grossed_out": "disgusted", "repulsed": "disgusted", "revolted": "disgusted", 
+    "appalled": "disgusted", "cringing": "disgusted", "awkward": "nervous",
+    "timid": "shy", "bashful": "shy", "coy": "shy", "embarrassed": "shy", 
+    "blushing": "shy", "lightheaded": "dizzy", "faint": "dizzy", "woozy": "dizzy", 
+    "confounded": "dizzy",
+
+    # Neutrality
+    "calm": "neutral", "relaxed": "neutral", "composed": "neutral", 
+    "chill": "neutral", "stoic": "neutral", "indifferent": "neutral", 
+    "deadpan": "neutral", "moray": "neutral", "normal": "neutral", 
+    "quiet": "neutral"
 }
 
 def map_emotion(tag: str) -> str:
@@ -101,6 +169,7 @@ class StateMachine:
         self._bus.subscribe("llm_response", self._on_llm_response, priority=80)
         self._bus.subscribe("b_set_behavior", self._on_set_behavior, priority=80)
         self._bus.subscribe("b_speak_mode_toggled", self._on_speak_mode_toggled, priority=80)
+        self._bus.subscribe("b_work_mode_toggled", self._on_work_mode_toggled, priority=80)
 
         logger.info("StateMachine initialized (Live-Stream Buffer Restored)")
 
@@ -187,6 +256,25 @@ class StateMachine:
             self._is_conversing = False
             self._idle_return_time = time.monotonic() + 0.5
             # State will return to base in next tick
+
+    def _on_work_mode_toggled(self, payload: dict) -> None:
+        is_active = payload.get("active", False)
+        if is_active:
+            self._base_emotion = "focused"
+            self._set_emotion("focused")
+            logger.info("StateMachine: Work Mode Active (Base: focused)")
+        else:
+            # Revert to current behavior mode's default
+            if self._behavior_mode == "wander":
+                self._base_emotion = "sad"
+            elif self._behavior_mode == "corner":
+                self._base_emotion = "sleeping"
+            elif self._behavior_mode == "follow":
+                self._base_emotion = "neutral"
+            
+            if not self._is_conversing:
+                self._set_emotion(self._base_emotion)
+            logger.info(f"StateMachine: Work Mode Deactivated (Restored: {self._base_emotion})")
 
     def _on_llm_stream_chunk(self, payload: dict) -> None:
         chunk = payload.get("text", "")

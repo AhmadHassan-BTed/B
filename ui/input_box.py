@@ -24,6 +24,15 @@ BG_COLOR = QColor("#1A1A1A")
 TEXT_COLOR = "#00E6FF"
 CORNER_RADIUS = 12
 
+_HAS_WIN32 = False
+if sys.platform == "win32":
+    try:
+        import win32con
+        import win32gui
+        _HAS_WIN32 = True
+    except ImportError:
+        pass
+
 class InputBox(QWidget):
     def __init__(self, bus: EventBus, screen_rect: QRect) -> None:
         super().__init__()
@@ -157,6 +166,19 @@ class InputBox(QWidget):
                 self.hide()
                 return True
         return super().eventFilter(obj, event)
+
+    def _enforce_topmost(self) -> None:
+        if not _HAS_WIN32:
+            return
+        hwnd = int(self.winId())
+        win32gui.SetWindowPos(
+            hwnd, win32con.HWND_TOPMOST, 0, 0, 0, 0,
+            win32con.SWP_NOMOVE | win32con.SWP_NOSIZE | win32con.SWP_NOACTIVATE
+        )
+
+    def showEvent(self, event) -> None:
+        super().showEvent(event)
+        self._enforce_topmost()
 
     def paintEvent(self, event: QPaintEvent) -> None:
         painter = QPainter(self)

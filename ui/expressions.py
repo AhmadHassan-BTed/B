@@ -601,3 +601,18 @@ draw_gentle = draw_empathic
 draw_supportive = draw_empathic
 draw_elated = draw_delighted
 draw_assuring = draw_supportive
+
+# ──────────────────────────────────────────────────────────────
+# ALIASES — Mapping new tags to closest existing visuals
+# ──────────────────────────────────────────────────────────────
+draw_tease = draw_playful
+draw_gentle = draw_empathic
+draw_supportive = draw_empathic
+draw_elated = draw_delighted
+draw_assuring = draw_supportive
+
+# Missing aliases synced from the brain's _VALID_EMOTIONS list
+draw_sleepy = draw_sleeping 
+draw_joking = draw_mischievous
+draw_enthusiastic = draw_excited
+draw_smile = draw_happy
