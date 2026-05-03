@@ -1,0 +1,5 @@
+# Mark binary files to prevent Git from trying to diff them
+*.pyc binary -diff
+*.onnx binary -diff
+*.gguf binary -diff
+__pycache__/ binary -diff
