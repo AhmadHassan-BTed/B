@@ -726,7 +726,7 @@ class CognitiveEngine(QObject):
             return
 
         # Look for things to remember from the user's latest message
-        if self._history and self._history[-2]["role"] == "user":
+        if len(self._history) >= 2 and self._history[-2]["role"] == "user":
             self._extract_memory_facts(self._history[-2]["content"])
 
         # No need to publish llm_sentences here anymore as they are streamed,

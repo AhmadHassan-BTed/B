@@ -8,7 +8,6 @@ __pycache__/
 # Massive AI Models (Do not push these to GitHub!)
 models/*.gguf
 models/*.onnx
-models/*.json
 
 # Dynamic Memory/State (Keeps your local B's memory out of version control)
 brain/memory.json
