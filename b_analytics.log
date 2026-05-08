@@ -1,0 +1,653 @@
+20:14:00 │ B.main               │ INFO  │ ═══ B is waking up ═══
+20:14:00 │ B.main               │ INFO  │ Screen geometry: 1920x1080 at (0,0)
+20:14:00 │ B.physics.kinematics │ INFO  │ KinematicsEngine initialized (screen: 1920x1080, start: 1720,100)
+20:14:00 │ B.ui.overlay         │ INFO  │ WindowManager initialized (180x112 canvas)
+20:14:00 │ B.ui.face            │ INFO  │ FaceRenderer initialized (180x112, morph transitions)
+20:14:00 │ B.ui.input           │ INFO  │ InputBox initialized
+20:14:00 │ B.brain.soul         │ INFO  │ StateMachine initialized (Live-Stream Buffer Restored)
+20:14:00 │ B.brain.llm          │ INFO  │ Initializing Groq Engine (Model: llama-3.3-70b-versatile)...
+20:14:00 │ B.brain.llm          │ INFO  │ Groq Engine ready.
+20:14:00 │ B.brain.llm          │ INFO  │ CognitiveEngine initialized
+20:14:00 │ B.vision.semantic    │ INFO  │ Extraction worker loop started
+20:14:00 │ B.vision.semantic    │ INFO  │ SemanticVisionSensor started | rate_limit=4.0s | uia_timeout=1.5s
+20:14:00 │ B.vision.capture     │ INFO  │ VisionSensor (mss) initialized | Listening for semantic fallbacks
+20:14:00 │ B.sensors.window_tracker │ INFO  │ WindowTracker started | strategy=WinEventHook | debounce=150ms
+20:14:00 │ B.sensors.window_tracker │ INFO  │ ✓ WinEvent hook installed (handle=0xC20403)
+20:14:00 │ B.sensors.window_tracker │ INFO  │ 🔎 FOCUS → [UNKNOWN        ] 'B - Antigravity - main.py' (antigravity.exe pid=14648)  [0.5 ms]
+20:14:00 │ B.brain.autonomy     │ INFO  │ AutonomyEngine (Loop) initialized
+20:14:00 │ B.audio.speaker      │ INFO  │ Robo-VoiceEngine initialized
+20:14:00 │ B.ui.overlay         │ INFO  │ Click-through applied (HWND=0x002809A0)
+20:14:00 │ B.main               │ INFO  │ Window visible and click-through enabled
+20:14:00 │ B.main               │ INFO  │ Hotkeys registered: Kill (Ctrl+Shift+Alt+Q), Input (Ctrl+Shift+Alt+B), Speak (Ctrl+Shift+Alt+V), Work (Ctrl+Shift+Alt+W)
+20:14:00 │ B.main               │ INFO  │ Tick timer started (16ms / ~62fps)
+20:14:00 │ B.main               │ INFO  │ ═══ B is alive ═══
+20:14:00 │ B.main               │ INFO  │ Kill switch: Ctrl+Shift+Alt+Q (press in any window)
+20:14:03 │ B.audio.speaker      │ INFO  │ Piper TTS & DSP Vocoder loaded successfully.
+20:14:03 │ B.brain.autonomy     │ INFO  │ User is focused. B will be more subtle.
+20:14:06 │ B.brain.soul         │ INFO  │ StateMachine: Work Mode Active (Base: focused)
+20:14:06 │ B.brain.autonomy     │ INFO  │ Autonomy adjusted for Work Mode: True (Interval: 21.4s)
+20:14:06 │ B.main               │ INFO  │ 💼 Work Mode: ON
+20:14:12 │ B.audio.speaker      │ INFO  │ Audio playback finished and LLM idle, publishing b_finished_speaking
+20:14:36 │ B.brain.autonomy     │ INFO  │ Triggering proactive thought (Work Mode: True, App: unknown)
+20:14:36 │ B.brain.llm          │ INFO  │ 🧠 B is analyzing screen context... (Task: work)
+20:14:36 │ B.brain.llm          │ INFO  │ Cognitive Context: TITLE: "Gallery - Boxes.py and 4 more pages - Personal - Microsoft​ Edge Beta"
+SCREEN_CONTENT: [#1] C https://boxes.hackerspace-bamberg.de
+[#2] A Box
+[#3] BrickSorter
+[#4] Console2
+[#5] ElectronicsBox
+[#6] AngledBox
+[#7] CardBox
+[#8] Crate
+[#9] EngravingFrame
+[#10] BasedBox
+[#11] ClosedBox
+[#12] DiceBox
+[#13] EuroRackSkiff
+[#14] BayonetBox
+[#15] Console
+[#16] DisplayCase
+[#17] HalfBox
+20:14:36 │ B.brain.llm          │ INFO  │ CognitiveEngine: Spatial Map contains 17 IDs available for B to point to.
+20:14:37 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #5 -> (589.0, 1001.0, 'ElectronicsBox')
+20:14:37 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (589, 1001) -> Offset Destination: (599, 879)
+20:14:37 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #5 -> (589.0, 1001.0, 'ElectronicsBox') (fallback parse)
+20:14:37 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (589, 1001) -> Offset Destination: (599, 879)
+20:14:37 │ B.brain.llm          │ INFO  │ B: [CURIOUS] <MOVE:5> hey, what's with the ElectronicsBox? [EXCITED] is that what you're looking to buy or build? whirr—
+20:14:43 │ B.physics.kinematics │ INFO  │ Pointing duration expired. Returning to wander mode.
+20:14:48 │ B.audio.speaker      │ INFO  │ Audio playback finished and LLM idle, publishing b_finished_speaking
+20:14:49 │ B.ui.input           │ INFO  │ User spoke: B, can you please reccomend me any box from the sreen. After recommending, move to that box too.
+20:14:49 │ B.sensors.window_tracker │ INFO  │ 🔎 FOCUS → [BROWSER        ] 'Gallery - Boxes.py and 4 more pages - Personal - Microsoft​ ' (msedge.exe pid=22812)  [0.2 ms]
+20:14:50 │ B.brain.llm          │ INFO  │ Work goal captured: B, can you please reccomend me any box from the sreen. After recommending, move to that box too.
+20:14:50 │ B.brain.llm          │ INFO  │ Triggering immediate screen analysis for new goal...
+20:14:51 │ B.brain.llm          │ INFO  │ 🧠 B is analyzing screen context... (Task: work)
+20:14:51 │ B.brain.llm          │ INFO  │ Cognitive Context: TITLE: "Gallery - Boxes.py and 4 more pages - Personal - Microsoft​ Edge Beta"
+SCREEN_CONTENT: [#1] C https://boxes.hackerspace-bamberg.de
+[#2] A Box
+[#3] BrickSorter
+[#4] Console2
+[#5] ElectronicsBox
+[#6] AngledBox
+[#7] CardBox
+[#8] Crate
+[#9] EngravingFrame
+[#10] BasedBox
+[#11] ClosedBox
+[#12] DiceBox
+[#13] EuroRackSkiff
+[#14] BayonetBox
+[#15] Console
+[#16] DisplayCase
+[#17] HalfBox
+20:14:51 │ B.brain.llm          │ INFO  │ CognitiveEngine: Spatial Map contains 17 IDs available for B to point to.
+20:14:57 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #5 -> (589.0, 1001.0, 'ElectronicsBox')
+20:14:57 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (589, 1001) -> Offset Destination: (599, 879)
+20:14:57 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #5 -> (589.0, 1001.0, 'ElectronicsBox') (fallback parse)
+20:14:57 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (589, 1001) -> Offset Destination: (599, 879)
+20:14:57 │ B.brain.llm          │ INFO  │ B: [PLAYFUL] <MOVE:5> i think the ElectronicsBox is a great choice, btw! [SMILE] it looks like it has plenty of space for your gadgets! bwee!
+20:14:57 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'Gallery - Boxes.py and 4 more pages - Personal - Microsoft\u200b '  (proc=msedge.exe hwnd=0xC077C)
+20:14:58 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+20:14:58 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=257.2ms, spatial_nodes=0)  [257.2 ms]
+20:14:58 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+20:14:58 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:PaneControl', q=0.12, len=56, t=54.2ms, spatial_nodes=1)  [54.2 ms]
+20:14:58 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.12 > 0.00)
+20:14:58 │ B.vision.semantic    │ INFO  │ ╚══ EXTRACTION OK  ══ source=generic_tree_walk:PaneControl    q=0.12  56→56 chars  [448.1 ms]
+20:15:03 │ B.physics.kinematics │ INFO  │ Pointing duration expired. Returning to wander mode.
+20:15:08 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'Gallery - Boxes.py and 4 more pages - Personal - Microsoft\u200b '  (proc=msedge.exe hwnd=0xC077C)
+20:15:08 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+20:15:08 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=266.4ms, spatial_nodes=0)  [266.4 ms]
+20:15:08 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+20:15:08 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:PaneControl', q=0.12, len=56, t=24.1ms, spatial_nodes=1)  [24.2 ms]
+20:15:08 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.12 > 0.00)
+20:15:13 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'Gallery - Boxes.py and 4 more pages - Personal - Microsoft\u200b '  (proc=msedge.exe hwnd=0xC077C)
+20:15:13 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+20:15:14 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=329.2ms, spatial_nodes=0)  [329.2 ms]
+20:15:14 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+20:15:14 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:PaneControl', q=0.12, len=56, t=26.2ms, spatial_nodes=1)  [26.3 ms]
+20:15:14 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.12 > 0.00)
+20:15:14 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'Gallery - Boxes.py and 4 more pages - Personal - Microsoft\u200b '  (proc=msedge.exe hwnd=0xC077C)
+20:15:14 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+20:15:15 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=320.3ms, spatial_nodes=0)  [320.3 ms]
+20:15:15 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+20:15:15 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:PaneControl', q=0.12, len=56, t=28.5ms, spatial_nodes=1)  [28.5 ms]
+20:15:15 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.12 > 0.00)
+20:15:15 │ B.brain.autonomy     │ INFO  │ Triggering proactive thought (Work Mode: True, App: browser)
+20:15:15 │ B.brain.llm          │ INFO  │ 🧠 B is analyzing screen context... (Task: work)
+20:15:15 │ B.brain.llm          │ INFO  │ Cognitive Context: TITLE: "Gallery - Boxes.py and 4 more pages - Personal - Microsoft​ Edge Beta"
+SCREEN_CONTENT: [#1] t https://boxes.hackerspace-bamberg.de
+[#2] 9
+[#3] o
+[#4] A Box
+[#5] BrickSorter
+[#6] Console2
+[#7]  ... [TRUNCATED] ... like it has plenty of space for
+[#11] your gadgets!
+[#12] EngravingFrame
+[#13] BasedBox
+[#14] ClosedBox
+[#15] DiceBox
+[#16] EuroRackSkiff
+[#17] BayonetBox
+[#18] Console
+[#19] DisplayCase
+[#20] HalfBox
+20:15:15 │ B.brain.llm          │ INFO  │ CognitiveEngine: Spatial Map contains 20 IDs available for B to point to.
+20:15:16 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #7 -> (589.0, 1001.0, 'ElectronicsBox')
+20:15:16 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (589, 1001) -> Offset Destination: (599, 879)
+20:15:16 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #7 -> (589.0, 1001.0, 'ElectronicsBox') (fallback parse)
+20:15:16 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (589, 1001) -> Offset Destination: (599, 879)
+20:15:16 │ B.brain.llm          │ INFO  │ B: [EXCITED] <MOVE:7> or maybe the BrickSorter? [LAUGHING] that one looks like a fun DIY project! ding!
+20:15:16 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'Gallery - Boxes.py and 4 more pages - Personal - Microsoft\u200b '  (proc=msedge.exe hwnd=0xC077C)
+20:15:16 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+20:15:16 │ B.brain.autonomy     │ INFO  │ User is focused. B will be more subtle.
+20:15:16 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=340.8ms, spatial_nodes=0)  [340.8 ms]
+20:15:16 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+20:15:16 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:PaneControl', q=0.12, len=56, t=28.6ms, spatial_nodes=1)  [28.6 ms]
+20:15:16 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.12 > 0.00)
+20:15:22 │ B.physics.kinematics │ INFO  │ Pointing duration expired. Returning to wander mode.
+20:15:26 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'Gallery - Boxes.py and 4 more pages - Personal - Microsoft\u200b '  (proc=msedge.exe hwnd=0xC077C)
+20:15:27 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+20:15:27 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=399.7ms, spatial_nodes=0)  [399.7 ms]
+20:15:27 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+20:15:27 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:PaneControl', q=0.12, len=56, t=34.2ms, spatial_nodes=1)  [34.2 ms]
+20:15:27 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.12 > 0.00)
+20:15:30 │ B.audio.speaker      │ INFO  │ Audio playback finished and LLM idle, publishing b_finished_speaking
+20:15:37 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'Gallery - Boxes.py and 4 more pages - Personal - Microsoft\u200b '  (proc=msedge.exe hwnd=0xC077C)
+20:15:37 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+20:15:37 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=266.0ms, spatial_nodes=0)  [266.0 ms]
+20:15:37 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+20:15:37 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:PaneControl', q=0.12, len=56, t=27.4ms, spatial_nodes=1)  [27.4 ms]
+20:15:37 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.12 > 0.00)
+20:15:39 │ B.ui.input           │ INFO  │ User spoke: move to the halfbox
+20:15:40 │ B.brain.llm          │ INFO  │ Cognitive Context: TITLE: "Gallery - Boxes.py and 4 more pages - Personal - Microsoft​ Edge Beta"
+SCREEN_CONTENT: [#1] t https://boxes.hackerspace-bamberg.de
+[#2] A Box
+[#3] BrickSorter
+[#4] Console2
+[#5] AngledBox
+[#6] CardBox
+[#7] Crate
+[#8] BasedBox
+[#9] ClosedBox
+[#10] DiceBox
+[#11] EuroRackSkiff
+[#12] BayonetBox
+[#13] Console
+[#14] DisplayCase
+[#15] HalfBox
+[#16] that one looks like a fun DIY project!
+20:15:40 │ B.brain.llm          │ INFO  │ CognitiveEngine: Spatial Map contains 16 IDs available for B to point to.
+20:15:41 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #15 -> (1232.5, 1001.0, 'HalfBox')
+20:15:41 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (1232, 1001) -> Offset Destination: (1242, 879)
+20:15:41 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #15 -> (1232.5, 1001.0, 'HalfBox') (fallback parse)
+20:15:41 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (1232, 1001) -> Offset Destination: (1242, 879)
+20:15:41 │ B.brain.llm          │ INFO  │ B: [SMILE] <MOVE:15> ah, the HalfBox! [GENTLE] it looks like a great option for someone who wants something a bit more minimalist. [CURIOUS] what do you think of it? bzzt!
+20:15:41 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'Gallery - Boxes.py and 4 more pages - Personal - Microsoft\u200b '  (proc=msedge.exe hwnd=0xC077C)
+20:15:41 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+20:15:42 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=367.4ms, spatial_nodes=0)  [367.5 ms]
+20:15:42 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+20:15:42 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:PaneControl', q=0.12, len=56, t=35.6ms, spatial_nodes=1)  [35.7 ms]
+20:15:42 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.12 > 0.00)
+20:15:47 │ B.physics.kinematics │ INFO  │ Pointing duration expired. Returning to wander mode.
+20:15:52 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'Gallery - Boxes.py and 4 more pages - Personal - Microsoft\u200b '  (proc=msedge.exe hwnd=0xC077C)
+20:15:52 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+20:15:52 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=286.9ms, spatial_nodes=0)  [286.9 ms]
+20:15:52 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+20:15:52 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:PaneControl', q=0.12, len=56, t=29.7ms, spatial_nodes=1)  [29.8 ms]
+20:15:52 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.12 > 0.00)
+20:15:53 │ B.audio.speaker      │ INFO  │ Voice playback interrupted by user.
+20:15:53 │ B.ui.input           │ INFO  │ User spoke: now, move to the ABox
+20:15:54 │ B.brain.llm          │ INFO  │ Cognitive Context: TITLE: "Gallery - Boxes.py and 4 more pages - Personal - Microsoft​ Edge Beta"
+SCREEN_CONTENT: [#1] t https://boxes.hackerspace-bamberg.de
+[#2] 9
+[#3] A Box
+[#4] BrickSorter
+[#5] Console2
+[#6] Electro ... [TRUNCATED] ... Box
+[#7] AngledBox
+[#8] CardBox
+[#9] Crate
+[#10] EngravingFrame
+[#11] BasedBox
+[#12] ClosedBox
+[#13] ah, the HalfBox!
+[#14] EuroRackSkiff
+[#15] BayonetBox
+[#16] Console
+[#17] DisplayCase
+[#18] HalfBox
+20:15:54 │ B.brain.llm          │ INFO  │ CognitiveEngine: Spatial Map contains 18 IDs available for B to point to.
+20:15:55 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #3 -> (588.5, 270.5, 'A Box')
+20:15:55 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (588, 270) -> Offset Destination: (598, 148)
+20:15:55 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #3 -> (588.5, 270.5, 'A Box') (fallback parse)
+20:15:55 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (588, 270) -> Offset Destination: (598, 148)
+20:15:55 │ B.brain.llm          │ INFO  │ B: [EXCITED] <MOVE:3> okay, checking out the A Box! [CURIOUS] it seems like a simple but useful option - what do you like about it? whirr—
+20:15:55 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'Gallery - Boxes.py and 4 more pages - Personal - Microsoft\u200b '  (proc=msedge.exe hwnd=0xC077C)
+20:15:55 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+20:15:55 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=377.0ms, spatial_nodes=0)  [377.1 ms]
+20:15:55 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+20:15:55 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:PaneControl', q=0.12, len=56, t=40.5ms, spatial_nodes=1)  [40.5 ms]
+20:15:55 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.12 > 0.00)
+20:16:01 │ B.physics.kinematics │ INFO  │ Pointing duration expired. Returning to wander mode.
+20:16:05 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'Gallery - Boxes.py and 4 more pages - Personal - Microsoft\u200b '  (proc=msedge.exe hwnd=0xC077C)
+20:16:05 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+20:16:06 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=403.4ms, spatial_nodes=0)  [403.5 ms]
+20:16:06 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+20:16:06 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:PaneControl', q=0.12, len=56, t=28.3ms, spatial_nodes=1)  [28.3 ms]
+20:16:06 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.12 > 0.00)
+20:16:07 │ B.audio.speaker      │ INFO  │ Audio playback finished and LLM idle, publishing b_finished_speaking
+20:16:08 │ B.ui.input           │ INFO  │ User spoke: now, see what me and her are doing
+20:16:08 │ B.sensors.window_tracker │ INFO  │ 🔎 FOCUS → [UNKNOWN        ] 'WhatsApp Beta' (whatsapp.root.exe pid=11544)  [0.4 ms]
+20:16:10 │ B.brain.llm          │ INFO  │ Cognitive Context: TITLE: "Gallery - Boxes.py and 4 more pages - Personal - Microsoft​ Edge Beta"
+SCREEN_CONTENT: [#1] t https://boxes.hackerspace-bamberg.de
+[#2] 9
+[#3] o
+[#4] A Box
+[#5] BrickSorter
+[#6] Console2
+[#7]  ... [TRUNCATED] ... ledBox
+[#9] CardBox
+[#10] Crate
+[#11] BasedBox
+[#12] okay, checking out the A Box!
+[#13] EngravingFrame
+[#14] DiceBox
+[#15] EuroRackSkiff
+[#16] BayonetBox
+[#17] Console
+[#18] DisplayCase
+[#19] HalfBox
+20:16:10 │ B.brain.llm          │ INFO  │ CognitiveEngine: Spatial Map contains 19 IDs available for B to point to.
+20:16:11 │ B.brain.llm          │ INFO  │ B: [CONFUSED] wait, who's her? [CURIOUS] i don't see anyone else on the screen, just a bunch of boxes. [SKEPTICAL] are you talking to someone or is this a mystery box project? bwee!
+20:16:11 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [UNKNOWN        ] 'WhatsApp Beta'  (proc=whatsapp.root.exe hwnd=0xB001C)
+20:16:11 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_generic
+20:16:12 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='generic_tree_walk:PaneControl', q=0.02, len=33, t=773.9ms, spatial_nodes=6)  [773.9 ms]
+20:16:12 │ B.vision.semantic    │ WARNING │ ╚══ EXTRACTION FAIL ══ q=0.02 len=33 — emitting semantic_extraction_failed
+20:16:22 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [UNKNOWN        ] 'WhatsApp Beta'  (proc=whatsapp.root.exe hwnd=0xB001C)
+20:16:22 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_generic
+20:16:22 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='generic_tree_walk:PaneControl', q=0.02, len=33, t=98.0ms, spatial_nodes=6)  [98.0 ms]
+20:16:22 │ B.vision.semantic    │ WARNING │ ╚══ EXTRACTION FAIL ══ q=0.02 len=33 — emitting semantic_extraction_failed
+20:16:28 │ B.audio.speaker      │ INFO  │ Audio playback finished and LLM idle, publishing b_finished_speaking
+20:16:32 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [UNKNOWN        ] 'WhatsApp Beta'  (proc=whatsapp.root.exe hwnd=0xB001C)
+20:16:32 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_generic
+20:16:32 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='generic_tree_walk:PaneControl', q=0.02, len=33, t=93.0ms, spatial_nodes=6)  [93.0 ms]
+20:16:32 │ B.vision.semantic    │ WARNING │ ╚══ EXTRACTION FAIL ══ q=0.02 len=33 — emitting semantic_extraction_failed
+20:16:39 │ B.ui.input           │ INFO  │ User spoke: read my chat, and tell me what are we talking about
+20:16:41 │ B.brain.llm          │ INFO  │ Cognitive Context: TITLE: "WhatsApp Beta"
+SCREEN_CONTENT: [#1] WhatsApp
+[#2] Chats
+[#3] Q Search or start a new chat
+[#4] Choti Chiriya
+[#5] last seen today at 8:12 pm
+[#6] roh
+[#7] o
+[#8] BETA
+[#9] Favourites
+[#10] Ahm ... [TRUNCATED] ... a
+[#56] Mein kaam krva lu Mano ko
+[#57] may wait kar rha hun apka also, agar yae na gayin,
+[#58] to ap so jana, then uthyen gay to sari raat pyar karyen
+[#59] gay na
+[#60] 8:11 pm
+[#61] Type a message
+20:16:41 │ B.brain.llm          │ INFO  │ CognitiveEngine: Spatial Map contains 61 IDs available for B to point to.
+20:16:41 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #4 -> (528.5, 68.0, 'Choti Chiriya')
+20:16:41 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (528, 68) -> Offset Destination: (538, -54)
+20:16:42 │ B.brain.llm          │ WARNING │ Unknown emotion tag [giggling] — defaulting to neutral
+20:16:42 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #4 -> (528.5, 68.0, 'Choti Chiriya') (fallback parse)
+20:16:42 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (528, 68) -> Offset Destination: (538, -54)
+20:16:42 │ B.brain.llm          │ INFO  │ B: [CURIOUS] let me scan the chat... [FOCUSED] <MOVE:4> ah, i see you're chatting with Choti Chiriya. [PLAYFUL] it looks like you're discussing something romantic? [GIGGLING] "ap achi lagti hain" - that's sweet! bzzt!
+20:16:42 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [UNKNOWN        ] 'WhatsApp Beta'  (proc=whatsapp.root.exe hwnd=0xB001C)
+20:16:42 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_generic
+20:16:42 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='generic_tree_walk:PaneControl', q=0.02, len=33, t=115.7ms, spatial_nodes=6)  [115.7 ms]
+20:16:42 │ B.vision.semantic    │ WARNING │ ╚══ EXTRACTION FAIL ══ q=0.02 len=33 — emitting semantic_extraction_failed
+20:16:42 │ B.brain.autonomy     │ INFO  │ User is focused. B will be more subtle.
+20:16:48 │ B.physics.kinematics │ INFO  │ Pointing duration expired. Returning to wander mode.
+20:16:52 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [UNKNOWN        ] 'WhatsApp Beta'  (proc=whatsapp.root.exe hwnd=0xB001C)
+20:16:52 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_generic
+20:16:52 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='generic_tree_walk:PaneControl', q=0.02, len=33, t=90.3ms, spatial_nodes=6)  [90.3 ms]
+20:16:52 │ B.vision.semantic    │ WARNING │ ╚══ EXTRACTION FAIL ══ q=0.02 len=33 — emitting semantic_extraction_failed
+20:17:00 │ B.audio.speaker      │ INFO  │ Audio playback finished and LLM idle, publishing b_finished_speaking
+20:17:02 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [UNKNOWN        ] 'WhatsApp Beta'  (proc=whatsapp.root.exe hwnd=0xB001C)
+20:17:02 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_generic
+20:17:02 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='generic_tree_walk:PaneControl', q=0.02, len=33, t=91.6ms, spatial_nodes=6)  [91.6 ms]
+20:17:02 │ B.vision.semantic    │ WARNING │ ╚══ EXTRACTION FAIL ══ q=0.02 len=33 — emitting semantic_extraction_failed
+20:17:12 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [UNKNOWN        ] 'WhatsApp Beta'  (proc=whatsapp.root.exe hwnd=0xB001C)
+20:17:12 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_generic
+20:17:12 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='generic_tree_walk:PaneControl', q=0.02, len=33, t=56.8ms, spatial_nodes=6)  [56.9 ms]
+20:17:12 │ B.vision.semantic    │ WARNING │ ╚══ EXTRACTION FAIL ══ q=0.02 len=33 — emitting semantic_extraction_failed
+20:17:22 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [UNKNOWN        ] 'WhatsApp Beta'  (proc=whatsapp.root.exe hwnd=0xB001C)
+20:17:22 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_generic
+20:17:22 │ B.ui.input           │ INFO  │ User spoke: can you point the message, where i sent her the message
+20:17:23 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='generic_tree_walk:PaneControl', q=0.02, len=33, t=546.9ms, spatial_nodes=6)  [552.3 ms]
+20:17:23 │ B.vision.semantic    │ WARNING │ ╚══ EXTRACTION FAIL ══ q=0.02 len=33 — emitting semantic_extraction_failed
+20:17:23 │ B.brain.llm          │ INFO  │ Cognitive Context: TITLE: "WhatsApp Beta"
+SCREEN_CONTENT: [#1] WhatsApp
+[#2] Chats
+[#3] Q Search or start a new chat
+[#4] Yesterday
+[#5] 8:12 pm
+[#6] 8:04 pm
+[#7] 5:55 pm
+[#8] 5:42 pm
+[#9] o
+[#10] 4:47 pm
+[#11] o
+[#12]  ... [TRUNCATED] ... ae na gayin, to ap so jana, then uthyen gay to sari raat pyar karyen gay na
+[#58] 8:11 pm
+[#59] Shahida
+[#60] 1:39 pm
+[#61] https://youtube.com/shorts/vb18hB... O
+[#62] Sinister
+[#63] 0k
+[#64] 1:10 pm
+20:17:23 │ B.brain.llm          │ INFO  │ CognitiveEngine: Spatial Map contains 64 IDs available for B to point to.
+20:17:30 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #19 -> (662.5, 710.0, 'Mein kaam krva lu Mano ko')
+20:17:30 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (662, 710) -> Offset Destination: (672, 588)
+20:17:30 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #19 -> (662.5, 710.0, 'Mein kaam krva lu Mano ko') (fallback parse)
+20:17:30 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (662, 710) -> Offset Destination: (672, 588)
+20:17:30 │ B.brain.llm          │ INFO  │ B: [EXCITED] <MOVE:19> ah, i think i found it! [CURIOUS] the message "Mein kaam krva lu Mano ko" seems to be from you to Choti Chiriya. [SMILE] is that the one you were thinking of? whirr—
+20:17:30 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [UNKNOWN        ] 'WhatsApp Beta'  (proc=whatsapp.root.exe hwnd=0xB001C)
+20:17:30 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_generic
+20:17:31 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='generic_tree_walk:PaneControl', q=0.02, len=33, t=431.1ms, spatial_nodes=6)  [431.1 ms]
+20:17:31 │ B.vision.semantic    │ WARNING │ ╚══ EXTRACTION FAIL ══ q=0.02 len=33 — emitting semantic_extraction_failed
+20:17:36 │ B.physics.kinematics │ INFO  │ Pointing duration expired. Returning to wander mode.
+20:17:41 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [UNKNOWN        ] 'WhatsApp Beta'  (proc=whatsapp.root.exe hwnd=0xB001C)
+20:17:41 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_generic
+20:17:41 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='generic_tree_walk:PaneControl', q=0.02, len=33, t=332.4ms, spatial_nodes=6)  [332.4 ms]
+20:17:41 │ B.vision.semantic    │ WARNING │ ╚══ EXTRACTION FAIL ══ q=0.02 len=33 — emitting semantic_extraction_failed
+20:17:42 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [UNKNOWN        ] 'WhatsApp Beta'  (proc=whatsapp.root.exe hwnd=0xB001C)
+20:17:42 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_generic
+20:17:42 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='generic_tree_walk:PaneControl', q=0.02, len=33, t=113.1ms, spatial_nodes=6)  [113.1 ms]
+20:17:42 │ B.vision.semantic    │ WARNING │ ╚══ EXTRACTION FAIL ══ q=0.02 len=33 — emitting semantic_extraction_failed
+20:17:43 │ B.brain.autonomy     │ INFO  │ Triggering proactive thought (Work Mode: True, App: unknown)
+20:17:43 │ B.brain.llm          │ INFO  │ 🧠 B is analyzing screen context... (Task: work)
+20:17:43 │ B.brain.llm          │ INFO  │ Cognitive Context: TITLE: "WhatsApp Beta"
+SCREEN_CONTENT: [#1] WhatsApp
+[#2] Chats
+[#3] Q Search or start a new chat
+[#4] Yesterday
+[#5] 8:17 pm
+[#6] 8:04 pm
+[#7] 5:55 pm
+[#8] 5:42 pm
+[#9] o
+[#10] 4:47 pm
+[#11] o
+[#12]  ... [TRUNCATED] ... BSSE Social Services F-22-A
+[#54] 1:55 pm
+[#55] Saad: Allah Apko hidayat de, Allah apk...
+[#56] Shahida
+[#57] 1:39 pm
+[#58] https://youtube.com/shorts/vb18hB... O
+[#59] Sinister
+[#60] 0k
+[#61] 1:10 pm
+20:17:43 │ B.brain.llm          │ INFO  │ CognitiveEngine: Spatial Map contains 61 IDs available for B to point to.
+20:17:44 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #22 -> (620.0, 793.0, 'Me krti hun call')
+20:17:44 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (620, 793) -> Offset Destination: (630, 671)
+20:17:44 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #22 -> (620.0, 793.0, 'Me krti hun call') (fallback parse)
+20:17:44 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (620, 793) -> Offset Destination: (630, 671)
+20:17:44 │ B.brain.llm          │ INFO  │ B: [SMILE] <MOVE:22> and then there's "Me krti hun call" - are you planning to call her? [GENTLE] it looks like a sweet conversation! bwee!
+20:17:44 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [UNKNOWN        ] 'WhatsApp Beta'  (proc=whatsapp.root.exe hwnd=0xB001C)
+20:17:44 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_generic
+20:17:44 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='generic_tree_walk:PaneControl', q=0.02, len=33, t=120.1ms, spatial_nodes=6)  [120.1 ms]
+20:17:44 │ B.vision.semantic    │ WARNING │ ╚══ EXTRACTION FAIL ══ q=0.02 len=33 — emitting semantic_extraction_failed
+20:17:44 │ B.brain.autonomy     │ INFO  │ User is focused. B will be more subtle.
+20:17:50 │ B.physics.kinematics │ INFO  │ Pointing duration expired. Returning to wander mode.
+20:17:54 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [UNKNOWN        ] 'WhatsApp Beta'  (proc=whatsapp.root.exe hwnd=0xB001C)
+20:17:54 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_generic
+20:17:54 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='generic_tree_walk:PaneControl', q=0.02, len=33, t=83.6ms, spatial_nodes=6)  [83.6 ms]
+20:17:54 │ B.vision.semantic    │ WARNING │ ╚══ EXTRACTION FAIL ══ q=0.02 len=33 — emitting semantic_extraction_failed
+20:17:57 │ B.audio.speaker      │ INFO  │ Audio playback finished and LLM idle, publishing b_finished_speaking
+20:18:04 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [UNKNOWN        ] 'WhatsApp Beta'  (proc=whatsapp.root.exe hwnd=0xB001C)
+20:18:04 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_generic
+20:18:04 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='generic_tree_walk:PaneControl', q=0.02, len=33, t=69.1ms, spatial_nodes=6)  [69.1 ms]
+20:18:04 │ B.vision.semantic    │ WARNING │ ╚══ EXTRACTION FAIL ══ q=0.02 len=33 — emitting semantic_extraction_failed
+20:18:13 │ B.ui.input           │ INFO  │ User spoke: can you move to the message, where she asked me to wait
+20:18:14 │ B.brain.llm          │ INFO  │ Cognitive Context: TITLE: "WhatsApp Beta"
+SCREEN_CONTENT: [#1] WhatsApp
+[#2] O call
+[#3] Chats
+[#4] Q Search or start a new chat
+[#5] roh
+[#6] o
+[#7] BETA
+[#8] Favourites
+[#9] Ahmad (You)
+[#10] Groups 1
+[#11] w 03316158 ... [TRUNCATED] ... 54] Shahida
+[#55] 1:39 pm
+[#56] https://youtube.com/shorts/vb18hB... O
+[#57] Sinister
+[#58] 0k
+[#59] 1:10 pm
+[#60] me wait wait
+[#61] 8:11 pm W
+[#62] pm
+[#63] :17 pm
+[#64] 8:17 V/
+[#65] Type a message
+20:18:14 │ B.brain.llm          │ INFO  │ CognitiveEngine: Spatial Map contains 65 IDs available for B to point to.
+20:18:16 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #45 -> (1418.5, 562.5, 'may wait kar rha hun apka also, agar yae na gayin, to ap so ')
+20:18:16 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (1418, 562) -> Offset Destination: (1428, 440)
+20:18:16 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #45 -> (1418.5, 562.5, 'may wait kar rha hun apka also, agar yae na gayin, to ap so ') (fallback parse)
+20:18:16 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (1418, 562) -> Offset Destination: (1428, 440)
+20:18:16 │ B.brain.llm          │ INFO  │ B: [CURIOUS] <MOVE:45> ah, i think i found it! [GENTLE] the message "may wait kar rha hun apka also, agar yae na gayin, to ap so jana..." seems to be where she's asking you to wait. [EMPATHIC] it looks like she's being a bit mysterious, but wants you to be patient! ding!
+20:18:16 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [UNKNOWN        ] 'WhatsApp Beta'  (proc=whatsapp.root.exe hwnd=0xB001C)
+20:18:16 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_generic
+20:18:16 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='generic_tree_walk:PaneControl', q=0.02, len=33, t=235.1ms, spatial_nodes=6)  [235.2 ms]
+20:18:16 │ B.vision.semantic    │ WARNING │ ╚══ EXTRACTION FAIL ══ q=0.02 len=33 — emitting semantic_extraction_failed
+20:18:22 │ B.physics.kinematics │ INFO  │ Pointing duration expired. Returning to wander mode.
+20:18:26 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [UNKNOWN        ] 'WhatsApp Beta'  (proc=whatsapp.root.exe hwnd=0xB001C)
+20:18:26 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_generic
+20:18:26 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='generic_tree_walk:PaneControl', q=0.02, len=33, t=80.8ms, spatial_nodes=6)  [80.8 ms]
+20:18:26 │ B.vision.semantic    │ WARNING │ ╚══ EXTRACTION FAIL ══ q=0.02 len=33 — emitting semantic_extraction_failed
+20:18:34 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [UNKNOWN        ] 'WhatsApp Beta'  (proc=whatsapp.root.exe hwnd=0xB001C)
+20:18:34 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_generic
+20:18:34 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='generic_tree_walk:PaneControl', q=0.02, len=33, t=76.3ms, spatial_nodes=6)  [76.3 ms]
+20:18:34 │ B.vision.semantic    │ WARNING │ ╚══ EXTRACTION FAIL ══ q=0.02 len=33 — emitting semantic_extraction_failed
+20:18:35 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [UNKNOWN        ] 'WhatsApp Beta'  (proc=whatsapp.root.exe hwnd=0xB001C)
+20:18:35 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_generic
+20:18:35 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='generic_tree_walk:PaneControl', q=0.02, len=33, t=63.1ms, spatial_nodes=6)  [63.1 ms]
+20:18:35 │ B.vision.semantic    │ WARNING │ ╚══ EXTRACTION FAIL ══ q=0.02 len=33 — emitting semantic_extraction_failed
+20:18:36 │ B.brain.autonomy     │ INFO  │ Triggering proactive thought (Work Mode: True, App: unknown)
+20:18:36 │ B.brain.llm          │ INFO  │ 🧠 B is analyzing screen context... (Task: work)
+20:18:36 │ B.brain.llm          │ INFO  │ Cognitive Context: TITLE: "WhatsApp Beta"
+SCREEN_CONTENT: [#1] Chats
+[#2] Q Search or start a new chat
+[#3] roh
+[#4] o
+[#5] BETA
+[#6] WhatsApp
+[#7] 9:18
+[#8] Favourites
+[#9] Ahmad (You)
+[#10] Groups 1
+[#11] Yesterday
+[# ... [TRUNCATED] ... e message "may wait kar rha hun
+[#58] apka also, agar yae na gayin, to ap so
+[#59] janam" seems to be where she's asking
+[#60] you to wait.
+[#61] Lß:17 pm
+[#62] me wait wait
+[#63] 8:17 pm V/
+[#64] 100
+20:18:36 │ B.brain.llm          │ INFO  │ CognitiveEngine: Spatial Map contains 64 IDs available for B to point to.
+20:18:38 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #57 -> (1512.5, 590.0, 'the message "may wait kar rha hun')
+20:18:38 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (1512, 590) -> Offset Destination: (1522, 468)
+20:18:38 │ B.brain.llm          │ WARNING │ Unknown emotion tag [reassuring] — defaulting to neutral
+20:18:38 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #57 -> (1512.5, 590.0, 'the message "may wait kar rha hun') (fallback parse)
+20:18:38 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (1512, 590) -> Offset Destination: (1522, 468)
+20:18:38 │ B.brain.llm          │ INFO  │ B: [SMILE] <MOVE:57> and it looks like the key part of the message is "may wait kar rha hun apka also, agar yae na gayin, to ap so" - she's definitely asking you to wait for something! [REASSURING] don't worry, i'm sure it'll be worth it! bzzt!
+20:18:38 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [UNKNOWN        ] 'WhatsApp Beta'  (proc=whatsapp.root.exe hwnd=0xB001C)
+20:18:39 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_generic
+20:18:39 │ B.sensors.window_tracker │ INFO  │ 🔎 FOCUS → [UNKNOWN        ] 'WhatsApp Beta for Windows' (whatsapp.root.exe pid=11544)  [0.1 ms]
+20:18:40 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='generic_tree_walk:PaneControl', q=0.02, len=33, t=961.3ms, spatial_nodes=6)  [961.3 ms]
+20:18:40 │ B.vision.semantic    │ WARNING │ ╚══ EXTRACTION FAIL ══ q=0.02 len=33 — emitting semantic_extraction_failed
+20:18:40 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [UNKNOWN        ] 'WhatsApp Beta for Windows'  (proc=whatsapp.root.exe hwnd=0x20028E)
+20:18:40 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_generic
+20:18:40 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='generic_tree_walk:PaneControl', q=0.02, len=33, t=159.9ms, spatial_nodes=7)  [159.9 ms]
+20:18:40 │ B.vision.semantic    │ WARNING │ ╚══ EXTRACTION FAIL ══ q=0.02 len=33 — emitting semantic_extraction_failed
+20:18:44 │ B.physics.kinematics │ INFO  │ Pointing duration expired. Returning to wander mode.
+20:18:45 │ B.sensors.window_tracker │ INFO  │ 🔎 FOCUS → [UNKNOWN        ] 'WhatsApp Beta' (whatsapp.root.exe pid=11544)  [0.2 ms]
+20:18:45 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [UNKNOWN        ] 'WhatsApp Beta'  (proc=whatsapp.root.exe hwnd=0xB001C)
+20:18:45 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_generic
+20:18:46 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='generic_tree_walk:PaneControl', q=0.02, len=33, t=121.1ms, spatial_nodes=6)  [121.1 ms]
+20:18:46 │ B.vision.semantic    │ WARNING │ ╚══ EXTRACTION FAIL ══ q=0.02 len=33 — emitting semantic_extraction_failed
+20:18:50 │ B.main               │ INFO  │ ═══ Kill switch activated ═══
+20:18:50 │ B.main               │ INFO  │ ═══ B is sleeping ═══ (exit code: 0)
+23:02:06 │ B.main               │ INFO  │ ═══ B is waking up ═══
+23:02:06 │ B.main               │ INFO  │ Screen geometry: 1920x1080 at (0,0)
+23:02:06 │ B.physics.kinematics │ INFO  │ KinematicsEngine initialized (screen: 1920x1080, start: 1720,100)
+23:02:06 │ B.ui.overlay         │ INFO  │ WindowManager initialized (180x112 canvas)
+23:02:06 │ B.ui.face            │ INFO  │ FaceRenderer initialized (180x112, morph transitions)
+23:02:06 │ B.ui.input           │ INFO  │ InputBox initialized
+23:02:06 │ B.brain.soul         │ INFO  │ StateMachine initialized (Live-Stream Buffer Restored)
+23:02:06 │ B.brain.llm          │ INFO  │ Initializing Groq Engine (Model: llama-3.3-70b-versatile)...
+23:02:07 │ B.brain.llm          │ INFO  │ Groq Engine ready.
+23:02:07 │ B.brain.llm          │ INFO  │ CognitiveEngine initialized
+23:02:07 │ B.vision.semantic    │ INFO  │ Extraction worker loop started
+23:02:07 │ B.vision.semantic    │ INFO  │ SemanticVisionSensor started | rate_limit=4.0s | uia_timeout=1.5s
+23:02:07 │ B.vision.capture     │ INFO  │ VisionSensor (mss) initialized | Listening for semantic fallbacks
+23:02:07 │ B.sensors.window_tracker │ INFO  │ WindowTracker started | strategy=WinEventHook | debounce=150ms
+23:02:07 │ B.sensors.window_tracker │ INFO  │ 🔎 FOCUS → [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft​ Edge Beta' (msedge.exe pid=22812)  [1.8 ms]
+23:02:07 │ B.sensors.window_tracker │ INFO  │ ✓ WinEvent hook installed (handle=0x48409DB)
+23:02:07 │ B.brain.autonomy     │ INFO  │ AutonomyEngine (Loop) initialized
+23:02:07 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
+23:02:07 │ B.audio.speaker      │ INFO  │ Robo-VoiceEngine initialized
+23:02:07 │ B.ui.overlay         │ INFO  │ Click-through applied (HWND=0x006C0666)
+23:02:07 │ B.main               │ INFO  │ Window visible and click-through enabled
+23:02:07 │ B.main               │ INFO  │ Hotkeys registered: Kill (Ctrl+Shift+Alt+Q), Input (Ctrl+Shift+Alt+B), Speak (Ctrl+Shift+Alt+V), Work (Ctrl+Shift+Alt+W)
+23:02:07 │ B.main               │ INFO  │ Tick timer started (16ms / ~62fps)
+23:02:07 │ B.main               │ INFO  │ ═══ B is alive ═══
+23:02:07 │ B.main               │ INFO  │ Kill switch: Ctrl+Shift+Alt+Q (press in any window)
+23:02:07 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+23:02:10 │ B.audio.speaker      │ INFO  │ Piper TTS & DSP Vocoder loaded successfully.
+23:02:10 │ B.brain.autonomy     │ INFO  │ User is focused. B will be more subtle.
+23:02:10 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=2766.9ms, spatial_nodes=0)  [2767.0 ms]
+23:02:10 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+23:02:10 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:TextControl', q=0.11, len=75, t=28.3ms, spatial_nodes=1)  [28.3 ms]
+23:02:10 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
+23:02:10 │ B.vision.semantic    │ INFO  │ ╚══ EXTRACTION OK  ══ source=generic_tree_walk:TextControl    q=0.11  75→75 chars  [3128.1 ms]
+23:02:15 │ B.brain.soul         │ INFO  │ StateMachine: Work Mode Active (Base: focused)
+23:02:15 │ B.brain.autonomy     │ INFO  │ Autonomy adjusted for Work Mode: True (Interval: 16.7s)
+23:02:15 │ B.main               │ INFO  │ 💼 Work Mode: ON
+23:02:20 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
+23:02:20 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+23:02:21 │ B.audio.speaker      │ INFO  │ Audio playback finished and LLM idle, publishing b_finished_speaking
+23:02:21 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=381.8ms, spatial_nodes=0)  [381.9 ms]
+23:02:21 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+23:02:21 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:TextControl', q=0.11, len=75, t=41.5ms, spatial_nodes=1)  [41.5 ms]
+23:02:21 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
+23:02:31 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
+23:02:31 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+23:02:31 │ B.ui.input           │ INFO  │ User spoke: what video to watch? i'm bored
+23:02:31 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=365.5ms, spatial_nodes=0)  [365.6 ms]
+23:02:31 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+23:02:31 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:TextControl', q=0.11, len=75, t=34.7ms, spatial_nodes=1)  [34.7 ms]
+23:02:31 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
+23:02:32 │ B.brain.llm          │ INFO  │ Work goal captured: what video to watch? i'm bored
+23:02:32 │ B.brain.llm          │ INFO  │ Triggering immediate screen analysis for new goal...
+23:02:33 │ B.brain.llm          │ INFO  │ 🧠 B is analyzing screen context... (Task: work)
+23:02:33 │ B.brain.llm          │ INFO  │ Cognitive Context: TITLE: "YouTube and 5 more pages - Personal - Microsoft​ Edge Beta"
+SCREEN_CONTENT: [#1] https://www.youtube.com
+[#2] YouTube
+[#3] Subscriptions >
+[#4] The Lord of the Rings
+[#5] Apple
+[#6] Search
+[#7 ... [TRUNCATED] ... 5] WHO FIRST REALIZED
+[#46] SARUMAN TURNED EVIL
+[#47] 21:04
+[#48] You >
+[#49] How AIPAC Will Fall
+[#50] uncivilized
+[#51] 33K views • 1 day ago
+[#52] TEIüRlFYlNGORlGlNS...
+[#53] Explore
+[#54] Shopping
+23:02:33 │ B.brain.llm          │ INFO  │ CognitiveEngine: Spatial Map contains 54 IDs available for B to point to.
+23:02:39 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #15 -> (147.5, 271.5, 'Veritasium')
+23:02:39 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (148, 272) -> Offset Destination: (158, 150)
+23:02:39 │ B.brain.llm          │ INFO  │ B: [CURIOUS] <MOVE:15> hey, what about this veritasium video? [EXCITED] it's got a lot of views, maybe it's interesting? [PLAYFUL] or we could check out the lord of the rings, i see that on your screen too!
+23:02:39 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
+23:02:39 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+23:02:39 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=354.0ms, spatial_nodes=0)  [354.1 ms]
+23:02:39 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+23:02:39 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:TextControl', q=0.11, len=75, t=32.5ms, spatial_nodes=1)  [32.5 ms]
+23:02:39 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
+23:02:45 │ B.physics.kinematics │ INFO  │ Pointing duration expired. Returning to wander mode.
+23:02:49 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
+23:02:49 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+23:02:50 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=277.1ms, spatial_nodes=0)  [277.1 ms]
+23:02:50 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+23:02:50 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:TextControl', q=0.11, len=75, t=37.1ms, spatial_nodes=1)  [37.1 ms]
+23:02:50 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
+23:02:57 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
+23:02:57 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+23:02:57 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=399.6ms, spatial_nodes=0)  [399.7 ms]
+23:02:57 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+23:02:57 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:TextControl', q=0.11, len=75, t=28.4ms, spatial_nodes=1)  [28.4 ms]
+23:02:57 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
+23:02:58 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
+23:02:58 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+23:02:58 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=334.2ms, spatial_nodes=0)  [334.3 ms]
+23:02:58 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+23:02:58 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:TextControl', q=0.11, len=75, t=29.9ms, spatial_nodes=1)  [29.9 ms]
+23:02:58 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
+23:02:59 │ B.audio.speaker      │ INFO  │ Audio playback finished and LLM idle, publishing b_finished_speaking
+23:03:08 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
+23:03:08 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+23:03:09 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=274.5ms, spatial_nodes=0)  [274.7 ms]
+23:03:09 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+23:03:09 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:TextControl', q=0.11, len=75, t=42.4ms, spatial_nodes=1)  [42.4 ms]
+23:03:09 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
+23:03:17 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
+23:03:17 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+23:03:17 │ B.ui.input           │ INFO  │ User spoke: can you point to the lord of the ring video?
+23:03:18 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=588.8ms, spatial_nodes=0)  [588.8 ms]
+23:03:18 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+23:03:18 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:TextControl', q=0.11, len=75, t=62.3ms, spatial_nodes=1)  [62.3 ms]
+23:03:18 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
+23:03:19 │ B.brain.llm          │ INFO  │ Cognitive Context: TITLE: "YouTube and 5 more pages - Personal - Microsoft​ Edge Beta"
+SCREEN_CONTENT: [#1] https://www.youtube.com
+[#2] YouTube
+[#3] Subscriptions >
+[#4] The Lord of the Rings
+[#5] Apple
+[#6] Search
+[#7 ... [TRUNCATED] ... V-G
+[#49] # rjd ary
+[#50] WHO FIRST REALIZED
+[#51] SARUMAN TURNED EVIL
+[#52] How AIPAC Will Fall
+[#53] uncivilized
+[#54] 33K views • 1 day ago
+[#55] TEIüRlFYlNG 'ORIGINS..
+[#56] Explore
+[#57] Shopping
+23:03:19 │ B.brain.llm          │ INFO  │ CognitiveEngine: Spatial Map contains 57 IDs available for B to point to.
+23:03:20 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #4 -> (437.5, 124.0, 'The Lord of the Rings')
+23:03:20 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (438, 124) -> Offset Destination: (448, 2)
+23:03:21 │ B.brain.llm          │ INFO  │ B: [EXCITED] <MOVE:4> ah, found it! [PROUD] the lord of the rings is right here! [SMILE] want to watch it?
+23:03:21 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
+23:03:21 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+23:03:21 │ B.brain.autonomy     │ INFO  │ User is focused. B will be more subtle.
+23:03:21 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=375.1ms, spatial_nodes=0)  [375.1 ms]
+23:03:21 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+23:03:22 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:TextControl', q=0.11, len=75, t=28.8ms, spatial_nodes=1)  [28.8 ms]
+23:03:22 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
+23:03:26 │ B.physics.kinematics │ INFO  │ Pointing duration expired. Returning to wander mode.
+23:03:30 │ B.audio.speaker      │ INFO  │ Audio playback finished and LLM idle, publishing b_finished_speaking
+23:03:32 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
+23:03:32 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+23:03:32 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=257.6ms, spatial_nodes=0)  [257.7 ms]
+23:03:32 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+23:03:32 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:TextControl', q=0.11, len=75, t=26.5ms, spatial_nodes=1)  [26.5 ms]
+23:03:32 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
+23:03:33 │ B.brain.soul         │ INFO  │ StateMachine: Work Mode Deactivated (Restored: sad)
+23:03:33 │ B.brain.autonomy     │ INFO  │ Autonomy adjusted for Work Mode: False (Interval: 193.0s)
+23:03:33 │ B.main               │ INFO  │ 💼 Work Mode: OFF
+23:03:36 │ B.main               │ INFO  │ ═══ Kill switch activated ═══
+23:03:36 │ B.main               │ INFO  │ ═══ B is sleeping ═══ (exit code: 0)

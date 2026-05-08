@@ -32,10 +32,8 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger("B.brain.llm")
 
-MODEL_PATH = "models/phi-3-mini-4k-instruct-q4.gguf"
 GROQ_API_KEY = "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"
 GROQ_MODEL = "llama-3.3-70b-versatile"
-USE_GROQ = True # Set to False to go back to local
 
 # ──────────────────────────────────────────────────────────────────────────────
 # SYSTEM PROMPT
@@ -56,7 +54,7 @@ VISION AWARENESS:
 - If your pal asks "what's on my screen?", use the provided [USER'S SCREEN RIGHT NOW] or [LAST RELEVANT CONTEXT] to describe it accurately.
 - IMPORTANT: NEVER CLAIM you cannot see the screen. You always have visual context. If the current context is sparse, use the last relevant context provided.
 - If the current window is just "B", it's probably just your own interface — look at the "Last Relevant Context" instead.
-- PROHIBITION: Do not use the words 'project', 'line', 'code', or 'developer' unless the screen actually contains code. If the user is shopping or browsing, talk about the items (watches, prices, colors) instead.
+- PROHIBITION: Do not use the words 'project', 'line', 'code', or 'developer' unless the screen actually contains code.
 
 WHO B IS:
 - You are their constant companion. You know their vibe, their projects, and their energy perfectly.
@@ -166,8 +164,8 @@ FEW_SHOT: list[dict[str, str]] = [
 # RESPONSE PARSER
 # ──────────────────────────────────────────────────────────────────────────────
 
-# Matches [TAG] followed by the sentence text up to the next tag or end of string.
-_TAG_RE = re.compile(r'\[([A-Z_]+)\]\s*(.*?)(?=\s*\[[A-Z_]+\]|$)', re.DOTALL)
+# Matches [TAG] optionally followed by <MOVE:id> (case-insensitive, optional spaces/#), then the sentence text.
+_TAG_RE = re.compile(r'\[([A-Z_]+)\]\s*(?:<[Mm][Oo][Vv][Ee]\s*:\s*#?\s*(\d+)\s*>)?\s*(.*?)(?=\s*\[[A-Z_]+\]|$)', re.DOTALL)
 
 # Valid emotion names (lowercase) — used to reject hallucinated tags
 _VALID_EMOTIONS = {
@@ -180,7 +178,7 @@ _VALID_EMOTIONS = {
     "empathic", "tease", "gentle", "supportive", "elated", "assuring",
     "fully_engaged", "trusting", "warm", "strange", "wild", "gasps",
     "loyal", "patient", "joking", "enthusiastic", "smile", "funny", "with_a_grin",
-    "analysis", "insight", "encouraging"
+    "analysis", "insight", "encouraging", "giggling", "reassuring", "chuckling", "smirking"
 }
 
 
@@ -237,8 +235,7 @@ def _strip_system_tokens(text: str) -> str:
 
 def parse_sentences(text: str) -> list[dict[str, str]]:
     """
-    Split a B response into a list of {emotion, text} pairs.
-    Aggressively discards any conversational filler before the first tag.
+    Split a B response into a list of {emotion, text, ?move_id} pairs.
     """
     text = _strip_system_tokens(text)
     sentences: list[dict[str, str]] = []
@@ -246,7 +243,8 @@ def parse_sentences(text: str) -> list[dict[str, str]]:
     # Iterate through all found tags and their text
     for match in _TAG_RE.finditer(text):
         tag = match.group(1).lower()
-        body = match.group(2).strip()
+        move_id = match.group(2)
+        body = match.group(3).strip()
         
         if not body:
             continue
@@ -255,11 +253,15 @@ def parse_sentences(text: str) -> list[dict[str, str]]:
             logger.warning("Unknown emotion tag [%s] — defaulting to neutral", tag)
             tag = "neutral"
             
-        sentences.append({"emotion": tag, "text": body})
+        sentences.append({
+            "emotion": tag, 
+            "text": body,
+            "move_id": move_id
+        })
 
     # If the model completely failed to use tags, wrap the whole thing in neutral
     if not sentences and text.strip():
-        sentences.append({"emotion": "neutral", "text": text})
+        sentences.append({"emotion": "neutral", "text": text.strip(), "move_id": None})
 
     return sentences
 
@@ -382,19 +384,18 @@ class InferenceWorker(QObject):
                         # Look for a complete [TAG] sentence.
                         # Sentences end with . ! or ? AND we look for the start of the NEXT tag or end of stream.
                         if "[" in current_buffer and any(p in current_buffer for p in ".!?"):
-                            # Check if we have at least one full sentence [TAG] text.
-                            # We look for the pattern [TAG] text [ (the start of the next tag)
-                            # or just [TAG] text. if it ends with punctuation.
-                            match = re.search(r'\[([A-Z_]+)\]\s*(.*?[.!?])(?=\s*\[|$)', current_buffer, re.DOTALL)
+                            # Updated regex to capture <MOVE:id> robustly
+                            match = re.search(r'\[([A-Z_]+)\]\s*(?:<[Mm][Oo][Vv][Ee]\s*:\s*#?\s*(\d+)\s*>)?\s*(.*?[.!?])(?=\s*\[|$)', current_buffer, re.DOTALL)
                             if match:
                                 tag = match.group(1).lower()
-                                text = match.group(2).strip()
+                                move_id = match.group(2)
+                                text = match.group(3).strip()
                                 
                                 if tag not in _VALID_EMOTIONS:
                                     tag = "neutral"
                                     
                                 if text:
-                                    self.sentence_ready.emit({"emotion": tag, "text": text})
+                                    self.sentence_ready.emit({"emotion": tag, "text": text, "move_id": move_id})
                                     # Remove the processed sentence from the buffer
                                     current_buffer = current_buffer[match.end():].strip()
 
@@ -402,12 +403,13 @@ class InferenceWorker(QObject):
             
             # Catch any leftover text in the buffer as a final sentence
             if current_buffer.strip():
-                match = re.search(r'\[([A-Z_]+)\]\s*(.*)', current_buffer, re.DOTALL)
+                match = re.search(r'\[([A-Z_]+)\]\s*(?:<MOVE:(\d+)>)?\s*(.*)', current_buffer, re.DOTALL)
                 if match:
                     tag = match.group(1).lower()
-                    text = match.group(2).strip()
+                    move_id = match.group(2)
+                    text = match.group(3).strip()
                     if tag not in _VALID_EMOTIONS: tag = "neutral"
-                    if text: self.sentence_ready.emit({"emotion": tag, "text": text})
+                    if text: self.sentence_ready.emit({"emotion": tag, "text": text, "move_id": move_id})
                 elif current_buffer.strip():
                     # No tag found in leftover? Default to neutral
                     self.sentence_ready.emit({"emotion": "neutral", "text": current_buffer.strip()})
@@ -456,6 +458,8 @@ class CognitiveEngine(QObject):
         self._MAX_COMMITMENTS = 10
         self._last_high_quality_context = ""
         self._last_high_quality_time = 0.0
+        self._spatial_map: dict[str, tuple[int, int]] = {} # Map for MOVE commands
+        self._moved_this_turn = False # ISSUE 1: Idempotency tracker per response turn
 
         # Connect the bridge signals
         self.start_thinking_signal.connect(self._start_thinking)
@@ -504,35 +508,13 @@ class CognitiveEngine(QObject):
             self._awaiting_work_goal = False
 
     def _init_llm(self) -> None:
-        if USE_GROQ:
-            logger.info("Initializing Groq Engine (Model: %s)...", GROQ_MODEL)
-            try:
-                self._llm = GroqLLM(api_key=GROQ_API_KEY, model=GROQ_MODEL)
-                logger.info("Groq Engine ready.")
-                return
-            except Exception:
-                logger.exception("Failed to initialize Groq. Falling back to local.")
-
-        if not os.path.exists(MODEL_PATH):
-            logger.warning("Model not found at %s — inference disabled.", MODEL_PATH)
-            return
-
+        logger.info("Initializing Groq Engine (Model: %s)...", GROQ_MODEL)
         try:
-            from llama_cpp import Llama
-
-            threads = 10 # Boosted for 12-core system
-            logger.info("Loading LLM %s with %d threads (Performance Boost)...", MODEL_PATH, threads)
-            self._llm = Llama(
-                model_path=MODEL_PATH,
-                n_ctx=4096,
-                n_threads=threads,
-                n_batch=512,
-                offload_kqv=True, # Speed up prompt processing
-                verbose=False,
-            )
-            logger.info("LLM loaded.")
+            self._llm = GroqLLM(api_key=GROQ_API_KEY, model=GROQ_MODEL)
+            logger.info("Groq Engine ready.")
         except Exception:
-            logger.exception("Failed to load LLM.")
+            logger.exception("Failed to initialize Groq.")
+            self._llm = None
 
     def _load_memory(self) -> dict:
         if os.path.exists(self._memory_path):
@@ -588,6 +570,14 @@ class CognitiveEngine(QObject):
         self._last_context_quality = quality
         self._last_context_time = now
         self._current_context = "\n".join(parts)
+        
+        # CRITICAL: Only overwrite the spatial map if the new payload actually
+        # contains spatial data. OCR payloads (mss_capture) don't have spatial
+        # coordinates, so they would erase valid semantic data if we blindly set.
+        new_spatial = payload.get("spatial_map", {})
+        if new_spatial:
+            self._spatial_map = new_spatial
+            logger.debug("Spatial map updated: %d nodes", len(new_spatial))
         
         if quality >= 0.4:
             self._last_high_quality_context = self._current_context
@@ -670,6 +660,7 @@ class CognitiveEngine(QObject):
         self._stop_current_inference()
 
         self._is_thinking = True
+        self._moved_this_turn = False # Reset move tracker for the new response turn
         self._bus.publish("b_thinking", {"mode": mode})
         
         if len(self._history) > self._MAX_HISTORY:
@@ -754,6 +745,7 @@ class CognitiveEngine(QObject):
         self._stop_current_inference()
         
         self._is_thinking = True
+        self._moved_this_turn = False # Reset move tracker for the new response turn
         self._bus.publish("b_thinking", {"mode": "user_reply"}) # Notify vision sensors to pause
         # b_thinking already published in _on_user_spoke
 
@@ -809,6 +801,43 @@ class CognitiveEngine(QObject):
 
     def _build_messages(self, nudge_prompt: str = "") -> list[dict[str, str]]:
         system_content = SYSTEM_PROMPT
+        
+        # --- Dynamic Spatial Awareness Instructions ---
+        if self._spatial_map:
+            # Build a human-readable list of available spatial targets
+            id_list = ", ".join(f"#{k}" for k in sorted(self._spatial_map.keys(), key=lambda x: int(x)))
+            spatial_instr = (
+                "\n\nSPATIAL AWARENESS (ACTIVE):\n"
+                "- You can see the screen coordinates! Text blocks have IDs like [#1], [#2], etc.\n"
+                "- YOU CAN FLY! To move B and point at something, use <MOVE:id> after your emotion tag.\n"
+                "- Example: [EXCITED] <MOVE:4> check this out! [PROUD] <MOVE:12> i found it right here!\n"
+                "- ONLY use IDs you see in the current context. You can move once per sentence.\n"
+                "- CRITICAL: When the user says 'point me to', 'go to', 'show me', 'where is', "
+                "'find', or asks you to locate something on screen, you MUST:\n"
+                "  1. Search the SCREEN_CONTENT for the element they mentioned.\n"
+                "  2. Find the [#N] ID tag closest to that element.\n"
+                "  3. Respond with <MOVE:N> to fly there.\n"
+                "  4. If you cannot find it, say so honestly.\n"
+                f"- Available spatial IDs: [{id_list}]\n"
+            )
+        else:
+            spatial_instr = (
+                "\n\nSPATIAL AWARENESS (INACTIVE):\n"
+                "- No physical coordinates are available for this window. DO NOT use <MOVE:id> tags.\n"
+                "- Speak normally without attempting to fly or point."
+            )
+        system_content += spatial_instr
+
+        # --- Inject labeled spatial element list for the LLM to match targets ---
+        if self._spatial_map:
+            spatial_lines = []
+            for sid, data in sorted(self._spatial_map.items(), key=lambda x: int(x[0])):
+                label = data[2] if len(data) > 2 else "element"
+                if label:
+                    spatial_lines.append(f"  [#{sid}] \"{label}\"")
+            if spatial_lines:
+                system_content += "\n\nSCREEN ELEMENTS YOU CAN FLY TO:\n" + "\n".join(spatial_lines) + "\n"
+
         if self._work_mode:
             system_content += WORK_MODE_PROMPT
             if self._work_goal:
@@ -853,6 +882,7 @@ class CognitiveEngine(QObject):
         if self._current_context:
             ctx_log = self._current_context[:200] + " ... [TRUNCATED] ... " + self._current_context[-200:] if len(self._current_context) > 400 else self._current_context
             logger.info("Cognitive Context: %s", ctx_log)
+            logger.info("CognitiveEngine: Spatial Map contains %d IDs available for B to point to.", len(self._spatial_map))
         return msgs
 
     def _extract_memory_facts(self, text: str) -> None:
@@ -883,6 +913,17 @@ class CognitiveEngine(QObject):
     def _on_sentence_ready(self, sentence: dict) -> None:
         """Published as soon as a single sentence is complete during streaming."""
         self._bus.publish("llm_sentences", {"sentences": [sentence]})
+        
+        # Handle Move Request
+        move_id = sentence.get("move_id")
+        if move_id and not self._moved_this_turn:
+            if move_id in self._spatial_map:
+                coords = self._spatial_map[move_id]
+                logger.info("CognitiveEngine: Valid move request! B is flying to point at ID #%s -> %s", move_id, coords)
+                self._bus.publish("b_move_request", {"x": coords[0], "y": coords[1]})
+                self._moved_this_turn = True # Lock movement for this response turn
+            else:
+                logger.warning("CognitiveEngine: INVALID move request! LLM tried to fly to ID #%s, but it is not in the spatial map.", move_id)
 
     def _on_inference_finished(self, result: str) -> None:
         self._history.append({"role": "assistant", "content": result})
@@ -903,6 +944,21 @@ class CognitiveEngine(QObject):
         # No need to publish llm_sentences here anymore as they are streamed,
         # but we still parse for debug/logging if needed.
         sentences = parse_sentences(result)
+        
+        # Fallback MOVE parsing: Catch any <MOVE:id> tags that were missed
+        # during streaming (e.g., if the sentence was split weirdly).
+        if not self._moved_this_turn:
+            for s in sentences:
+                move_id = s.get("move_id")
+                if move_id:
+                    if move_id in self._spatial_map:
+                        coords = self._spatial_map[move_id]
+                        logger.info("CognitiveEngine: Valid move request! B is flying to point at ID #%s -> %s (fallback parse)", move_id, coords)
+                        self._bus.publish("b_move_request", {"x": coords[0], "y": coords[1]})
+                        self._moved_this_turn = True
+                        break  # Only fly to the first valid target
+                    else:
+                        logger.warning("CognitiveEngine: INVALID move request! LLM tried to fly to ID #%s (fallback parse), but it is not in the spatial map.", move_id)
 
         logger.info("B: %s", result) # Output to console as requested
 

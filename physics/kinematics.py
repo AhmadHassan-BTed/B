@@ -139,6 +139,10 @@ class KinematicsEngine:
         
         # Subscribe to behavior changes
         self._bus.subscribe("b_set_behavior", self._on_set_behavior)
+        self._bus.subscribe("b_move_request", self._on_move_request)
+        
+        # Pointing state
+        self._point_start_time = 0.0
         
         # Subscribe to the tick event — this drives the physics loop
         # ──────────────────────────────────────────────────────────────
@@ -174,6 +178,12 @@ class KinematicsEngine:
                 self._pick_new_wander_target()
                 self._last_wander_time = now
                 self._wander_interval = self._random_wander_interval()
+        elif self._mode == "point":
+            # Stay at the point for 6 seconds, then go back to wandering
+            if now - self._point_start_time > 6.0:
+                logger.info("Pointing duration expired. Returning to wander mode.")
+                self._mode = "wander"
+                self._last_wander_time = now
         elif self._mode == "corner":
             # Target the top-right corner safe zone
             self._target_x = float(self._screen_x + self._screen_w - FACE_W - SCREEN_PADDING - 50)
@@ -229,6 +239,10 @@ class KinematicsEngine:
                 damping = 0.88 # More resistance
             else:
                 damping = 0.94 # Less resistance (more slide)
+        elif self._mode == "point":
+            # Snappy movement for pointing
+            k = 0.10
+            damping = 0.85
 
         fx = -k * dx
         fy = -k * dy
@@ -386,15 +400,33 @@ class KinematicsEngine:
             "New wander target: (%.0f, %.0f)", self._target_x, self._target_y
         )
 
+    def _on_move_request(self, payload: dict) -> None:
+        """Handle a direct coordinate movement request (usually from LLM)."""
+        tx = payload.get("x")
+        ty = payload.get("y")
+        
+        if tx is not None and ty is not None:
+            # Offset the target so B's center isn't directly on top of the text
+            # Offset the target so B's bottom-left corner points to the text
+            # We want B to "point" at it, usually by being slightly to the right or above
+            self._target_x = float(tx + 10)
+            self._target_y = float(ty - FACE_H - 10)
+            
+            logger.info("Kinematics: Move Request Received! Target Center: (%.0f, %.0f) -> Offset Destination: (%.0f, %.0f)", tx, ty, self._target_x, self._target_y)
+            self._mode = "point"
+            self._point_start_time = time.monotonic()
+
     def _on_set_behavior(self, payload: dict) -> None:
         """Change B's movement behavior mode."""
         new_mode = payload.get("mode", "wander")
-        if new_mode in ["wander", "corner", "watch", "follow"]:
+        if new_mode in ["wander", "corner", "watch", "follow", "point"]:
             if self._mode != new_mode:
                 logger.info(f"Kinematics behavior changed: {self._mode} -> {new_mode}")
                 self._mode = new_mode
                 if new_mode == "wander":
                     self._last_wander_time = 0 # Force immediate target pick
+                elif new_mode == "point":
+                    self._point_start_time = time.monotonic()
 
     def _check_mouse_hover(self) -> None:
         """Polls global mouse position and detects duration-based state changes."""

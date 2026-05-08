@@ -1,0 +1,31 @@
+import os
+import urllib.request
+import sys
+
+URL = "https://huggingface.co/mradermacher/SmolLM2-1.7B-Instruct-Uncensored-GGUF/resolve/main/SmolLM2-1.7B-Instruct-Uncensored.Q4_K_M.gguf"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEST_DIR = os.path.join(BASE_DIR, "models")
+DEST_PATH = os.path.join(DEST_DIR, "SmolLM2-1.7B-Instruct-Uncensored.Q4_K_M.gguf")
+
+os.makedirs(DEST_DIR, exist_ok=True)
+
+def reporthook(blocknum, blocksize, totalsize):
+    readsofar = blocknum * blocksize
+    if totalsize > 0:
+        percent = readsofar * 1e2 / totalsize
+        s = "\r%5.1f%% %*d / %d bytes" % (
+            percent, len(str(totalsize)), readsofar, totalsize)
+        sys.stderr.write(s)
+        if readsofar >= totalsize:
+            sys.stderr.write("\n")
+    else:
+        sys.stderr.write("read %d\n" % (readsofar,))
+
+print(f"Downloading {URL}...")
+print(f"To: {DEST_PATH}")
+
+try:
+    urllib.request.urlretrieve(URL, DEST_PATH, reporthook)
+    print("\nDownload complete!")
+except Exception as e:
+    print(f"\nError downloading: {e}")

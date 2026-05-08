@@ -54,10 +54,41 @@ from audio.ears import EarsSensor
 # Each module uses logging.getLogger ("B.<module>") so we can filter
 # per-subsystem. Set to INFO for normal operation, DEBUG for development.
 # ──────────────────────────────────────────────────────────────────────
+# Filter out repetitive or unnecessary third-party logs
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
+
+log_formatter = logging.Formatter(
+    fmt="%(asctime)s │ %(name)-20s │ %(levelname)-5s │ %(message)s",
+    datefmt="%H:%M:%S"
+)
+
+# Persistent history log
+history_handler = logging.FileHandler("b_analytics.log", mode="a", encoding="utf-8")
+history_handler.setFormatter(log_formatter)
+
+# Current session log (cleared on start)
+session_handler = logging.FileHandler("b_session.log", mode="w", encoding="utf-8")
+session_handler.setFormatter(log_formatter)
+
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setFormatter(log_formatter)
+
+class ConsoleFilter(logging.Filter):
+    def filter(self, record):
+        if record.levelno >= logging.WARNING:
+            return True
+        if record.name in ("B.vision.semantic", "B.vision.capture", "B.sensors.window_tracker", "B.brain.autonomy"):
+            return False
+        if record.name == "B.brain.llm" and "Cognitive Context:" in record.getMessage():
+            return False
+        return True
+
+console_handler.addFilter(ConsoleFilter())
+
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s │ %(name)-20s │ %(levelname)-5s │ %(message)s",
-    datefmt="%H:%M:%S",
+    handlers=[history_handler, session_handler, console_handler]
 )
 logger = logging.getLogger("B.main")
 

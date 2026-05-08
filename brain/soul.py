@@ -56,6 +56,8 @@ _EMOTION_ALIASES = {
     "grinning": "smile", "beaming": "delighted", "content": "smile", 
     "pleased": "proud", "thrilled": "elated", "ecstatic": "elated", 
     "with_a_grin": "smile", "warm": "gentle", "radiant": "happy",
+    "giggling": "laughing", "chuckling": "playful", "smirking": "smug",
+    "reassuring": "empathic",
 
     # Love / Affection
     "loving": "love_struck", "affectionate": "love_struck", "sweet": "love_struck", 
@@ -353,6 +355,8 @@ class StateMachine:
         clean = re.sub(r'\*.*?\*', '', text)
         clean = re.sub(r'\[.*?\]', '', clean)
         clean = re.sub(r'\(.*?\)', '', clean)
+        # Strip <MOVE:id> tags so they don't show up in the chat bubble
+        clean = re.sub(r'<[Mm][Oo][Vv][Ee]\s*:\s*#?\s*\d+\s*>', '', clean)
         return clean.strip()
 
     def _set_emotion(self, emotion: str) -> None:

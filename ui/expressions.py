@@ -618,3 +618,7 @@ draw_enthusiastic = draw_excited
 draw_smile = draw_happy
 draw_analysis = draw_thinking
 draw_insight = draw_focused
+draw_giggling = draw_laughing
+draw_reassuring = draw_empathic
+draw_chuckling = draw_playful
+draw_smirking = draw_smug

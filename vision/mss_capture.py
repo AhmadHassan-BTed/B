@@ -104,7 +104,28 @@ class VisionSensor:
                     
                     # OCR (using Windows native OCR via winocr)
                     result = winocr.recognize_pil(img).get()
-                    raw_text = result.text.strip()
+                    
+                    spatial_map = {}
+                    text_parts = []
+                    node_id = 1
+                    
+                    for line in result.lines:
+                        if not line.words:
+                            continue
+                        
+                        min_x = min(w.bounding_rect.x for w in line.words)
+                        min_y = min(w.bounding_rect.y for w in line.words)
+                        max_x = max(w.bounding_rect.x + w.bounding_rect.width for w in line.words)
+                        max_y = max(w.bounding_rect.y + w.bounding_rect.height for w in line.words)
+                        
+                        center_x = left + min_x + (max_x - min_x) / 2
+                        center_y = top + min_y + (max_y - min_y) / 2
+                        
+                        spatial_map[str(node_id)] = (center_x, center_y, line.text[:60])
+                        text_parts.append(f"[#{node_id}] {line.text}")
+                        node_id += 1
+                        
+                    raw_text = "\n".join(text_parts)
 
                 # 3. Check for significant changes
                 current_context_state = f"{title}\n{raw_text}"
@@ -137,6 +158,7 @@ class VisionSensor:
                         "extraction_source": "ocr_vision",
                         "quality_score": round(quality, 2),
                         "content_length": len(raw_text),
+                        "spatial_map": spatial_map,
                     })
 
             except Exception as e:
