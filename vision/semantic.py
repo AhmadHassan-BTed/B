@@ -117,7 +117,7 @@ class SpatialMapManager:
         self._next_id = 1
 
     def register(self, ctrl) -> Optional[int]:
-        """Fetches coordinates and label, assigns an ID, and returns it."""
+        """Fetches coordinates, label, and control type, assigns an ID, and returns it."""
         try:
             rect = ctrl.BoundingRectangle
             if rect:
@@ -137,12 +137,23 @@ class SpatialMapManager:
                         except Exception:
                             pass
                         
+                        # Extract Control Type for semantic context
+                        ctype_name = "UNKNOWN"
+                        try:
+                            ctype_name = ctrl.ControlTypeName.replace("Control", "").upper()
+                        except Exception:
+                            pass
+
                         node_id = self._next_id
-                        self._map[str(node_id)] = (center_x, center_y, label)
+                        self._map[str(node_id)] = {
+                            "coords": (center_x, center_y),
+                            "label": label,
+                            "type": ctype_name
+                        }
                         self._next_id += 1
                         logger.debug(
-                            "SpatialMap: Registered [#%d] '%s' at (%d, %d)",
-                            node_id, label[:20], center_x, center_y,
+                            "SpatialMap: Registered [#%d] [%s] '%s' at (%d, %d)",
+                            node_id, ctype_name, label[:20], center_x, center_y,
                         )
                         return node_id
         except Exception as e:
@@ -228,11 +239,15 @@ def _read_control(ctrl, spatial_manager: Optional[SpatialMapManager] = None) -> 
     if not text:
         return ""
 
-    # Spatial Mapping: Assign an ID and prepend it to the text
+    # Spatial Mapping: Assign an ID and prepend semantic tag + ID to the text
     if spatial_manager:
         node_id = spatial_manager.register(ctrl)
         if node_id:
-            return f"[#{node_id}] {text}"
+            ctype_name = "TEXT"
+            try:
+                ctype_name = ctrl.ControlTypeName.replace("Control", "").upper()
+            except Exception: pass
+            return f"[#{node_id}] [{ctype_name}] {text}"
 
     return text
 
@@ -341,7 +356,13 @@ def _strategy_browser(window, spatial_manager: Optional[SpatialMapManager] = Non
 
         if best_doc:
             main_id = spatial_manager.register(best_doc) if spatial_manager else None
-            prefix = f"[#{main_id}] " if main_id else ""
+            prefix = ""
+            if main_id:
+                ctype = "DOCUMENT"
+                try: ctype = best_doc.ControlTypeName.replace("Control", "").upper()
+                except Exception: pass
+                prefix = f"[#{main_id}] [{ctype}] "
+            
             content_blocks.append(f"{prefix}{best_text}")
             
             # Spatial IDs for specific items (Links, etc.)
@@ -353,7 +374,8 @@ def _strategy_browser(window, spatial_manager: Optional[SpatialMapManager] = Non
                         if name and len(name) > 2:
                             node_id = spatial_manager.register(child)
                             if node_id:
-                                content_blocks.append(f"[#{node_id}] {name}")
+                                ctype_tag = ctype.replace("Control", "").upper()
+                                content_blocks.append(f"[#{node_id}] [{ctype_tag}] {name}")
 
     except Exception as e:
         logger.debug("[browser] Strategy error: %s", e)

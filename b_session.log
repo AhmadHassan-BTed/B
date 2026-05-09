@@ -1,154 +1,172 @@
-23:02:06 │ B.main               │ INFO  │ ═══ B is waking up ═══
-23:02:06 │ B.main               │ INFO  │ Screen geometry: 1920x1080 at (0,0)
-23:02:06 │ B.physics.kinematics │ INFO  │ KinematicsEngine initialized (screen: 1920x1080, start: 1720,100)
-23:02:06 │ B.ui.overlay         │ INFO  │ WindowManager initialized (180x112 canvas)
-23:02:06 │ B.ui.face            │ INFO  │ FaceRenderer initialized (180x112, morph transitions)
-23:02:06 │ B.ui.input           │ INFO  │ InputBox initialized
-23:02:06 │ B.brain.soul         │ INFO  │ StateMachine initialized (Live-Stream Buffer Restored)
-23:02:06 │ B.brain.llm          │ INFO  │ Initializing Groq Engine (Model: llama-3.3-70b-versatile)...
-23:02:07 │ B.brain.llm          │ INFO  │ Groq Engine ready.
-23:02:07 │ B.brain.llm          │ INFO  │ CognitiveEngine initialized
-23:02:07 │ B.vision.semantic    │ INFO  │ Extraction worker loop started
-23:02:07 │ B.vision.semantic    │ INFO  │ SemanticVisionSensor started | rate_limit=4.0s | uia_timeout=1.5s
-23:02:07 │ B.vision.capture     │ INFO  │ VisionSensor (mss) initialized | Listening for semantic fallbacks
-23:02:07 │ B.sensors.window_tracker │ INFO  │ WindowTracker started | strategy=WinEventHook | debounce=150ms
-23:02:07 │ B.sensors.window_tracker │ INFO  │ 🔎 FOCUS → [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft​ Edge Beta' (msedge.exe pid=22812)  [1.8 ms]
-23:02:07 │ B.sensors.window_tracker │ INFO  │ ✓ WinEvent hook installed (handle=0x48409DB)
-23:02:07 │ B.brain.autonomy     │ INFO  │ AutonomyEngine (Loop) initialized
-23:02:07 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
-23:02:07 │ B.audio.speaker      │ INFO  │ Robo-VoiceEngine initialized
-23:02:07 │ B.ui.overlay         │ INFO  │ Click-through applied (HWND=0x006C0666)
-23:02:07 │ B.main               │ INFO  │ Window visible and click-through enabled
-23:02:07 │ B.main               │ INFO  │ Hotkeys registered: Kill (Ctrl+Shift+Alt+Q), Input (Ctrl+Shift+Alt+B), Speak (Ctrl+Shift+Alt+V), Work (Ctrl+Shift+Alt+W)
-23:02:07 │ B.main               │ INFO  │ Tick timer started (16ms / ~62fps)
-23:02:07 │ B.main               │ INFO  │ ═══ B is alive ═══
-23:02:07 │ B.main               │ INFO  │ Kill switch: Ctrl+Shift+Alt+Q (press in any window)
-23:02:07 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
-23:02:10 │ B.audio.speaker      │ INFO  │ Piper TTS & DSP Vocoder loaded successfully.
-23:02:10 │ B.brain.autonomy     │ INFO  │ User is focused. B will be more subtle.
-23:02:10 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=2766.9ms, spatial_nodes=0)  [2767.0 ms]
-23:02:10 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
-23:02:10 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:TextControl', q=0.11, len=75, t=28.3ms, spatial_nodes=1)  [28.3 ms]
-23:02:10 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
-23:02:10 │ B.vision.semantic    │ INFO  │ ╚══ EXTRACTION OK  ══ source=generic_tree_walk:TextControl    q=0.11  75→75 chars  [3128.1 ms]
-23:02:15 │ B.brain.soul         │ INFO  │ StateMachine: Work Mode Active (Base: focused)
-23:02:15 │ B.brain.autonomy     │ INFO  │ Autonomy adjusted for Work Mode: True (Interval: 16.7s)
-23:02:15 │ B.main               │ INFO  │ 💼 Work Mode: ON
-23:02:20 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
-23:02:20 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
-23:02:21 │ B.audio.speaker      │ INFO  │ Audio playback finished and LLM idle, publishing b_finished_speaking
-23:02:21 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=381.8ms, spatial_nodes=0)  [381.9 ms]
-23:02:21 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
-23:02:21 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:TextControl', q=0.11, len=75, t=41.5ms, spatial_nodes=1)  [41.5 ms]
-23:02:21 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
-23:02:31 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
-23:02:31 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
-23:02:31 │ B.ui.input           │ INFO  │ User spoke: what video to watch? i'm bored
-23:02:31 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=365.5ms, spatial_nodes=0)  [365.6 ms]
-23:02:31 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
-23:02:31 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:TextControl', q=0.11, len=75, t=34.7ms, spatial_nodes=1)  [34.7 ms]
-23:02:31 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
-23:02:32 │ B.brain.llm          │ INFO  │ Work goal captured: what video to watch? i'm bored
-23:02:32 │ B.brain.llm          │ INFO  │ Triggering immediate screen analysis for new goal...
-23:02:33 │ B.brain.llm          │ INFO  │ 🧠 B is analyzing screen context... (Task: work)
-23:02:33 │ B.brain.llm          │ INFO  │ Cognitive Context: TITLE: "YouTube and 5 more pages - Personal - Microsoft​ Edge Beta"
-SCREEN_CONTENT: [#1] https://www.youtube.com
-[#2] YouTube
-[#3] Subscriptions >
-[#4] The Lord of the Rings
-[#5] Apple
-[#6] Search
-[#7 ... [TRUNCATED] ... 5] WHO FIRST REALIZED
-[#46] SARUMAN TURNED EVIL
-[#47] 21:04
-[#48] You >
-[#49] How AIPAC Will Fall
-[#50] uncivilized
-[#51] 33K views • 1 day ago
-[#52] TEIüRlFYlNGORlGlNS...
-[#53] Explore
-[#54] Shopping
-23:02:33 │ B.brain.llm          │ INFO  │ CognitiveEngine: Spatial Map contains 54 IDs available for B to point to.
-23:02:39 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #15 -> (147.5, 271.5, 'Veritasium')
-23:02:39 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (148, 272) -> Offset Destination: (158, 150)
-23:02:39 │ B.brain.llm          │ INFO  │ B: [CURIOUS] <MOVE:15> hey, what about this veritasium video? [EXCITED] it's got a lot of views, maybe it's interesting? [PLAYFUL] or we could check out the lord of the rings, i see that on your screen too!
-23:02:39 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
-23:02:39 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
-23:02:39 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=354.0ms, spatial_nodes=0)  [354.1 ms]
-23:02:39 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
-23:02:39 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:TextControl', q=0.11, len=75, t=32.5ms, spatial_nodes=1)  [32.5 ms]
-23:02:39 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
-23:02:45 │ B.physics.kinematics │ INFO  │ Pointing duration expired. Returning to wander mode.
-23:02:49 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
-23:02:49 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
-23:02:50 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=277.1ms, spatial_nodes=0)  [277.1 ms]
-23:02:50 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
-23:02:50 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:TextControl', q=0.11, len=75, t=37.1ms, spatial_nodes=1)  [37.1 ms]
-23:02:50 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
-23:02:57 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
-23:02:57 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
-23:02:57 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=399.6ms, spatial_nodes=0)  [399.7 ms]
-23:02:57 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
-23:02:57 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:TextControl', q=0.11, len=75, t=28.4ms, spatial_nodes=1)  [28.4 ms]
-23:02:57 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
-23:02:58 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
-23:02:58 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
-23:02:58 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=334.2ms, spatial_nodes=0)  [334.3 ms]
-23:02:58 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
-23:02:58 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:TextControl', q=0.11, len=75, t=29.9ms, spatial_nodes=1)  [29.9 ms]
-23:02:58 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
-23:02:59 │ B.audio.speaker      │ INFO  │ Audio playback finished and LLM idle, publishing b_finished_speaking
-23:03:08 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
-23:03:08 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
-23:03:09 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=274.5ms, spatial_nodes=0)  [274.7 ms]
-23:03:09 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
-23:03:09 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:TextControl', q=0.11, len=75, t=42.4ms, spatial_nodes=1)  [42.4 ms]
-23:03:09 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
-23:03:17 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
-23:03:17 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
-23:03:17 │ B.ui.input           │ INFO  │ User spoke: can you point to the lord of the ring video?
-23:03:18 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=588.8ms, spatial_nodes=0)  [588.8 ms]
-23:03:18 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
-23:03:18 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:TextControl', q=0.11, len=75, t=62.3ms, spatial_nodes=1)  [62.3 ms]
-23:03:18 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
-23:03:19 │ B.brain.llm          │ INFO  │ Cognitive Context: TITLE: "YouTube and 5 more pages - Personal - Microsoft​ Edge Beta"
-SCREEN_CONTENT: [#1] https://www.youtube.com
-[#2] YouTube
-[#3] Subscriptions >
-[#4] The Lord of the Rings
-[#5] Apple
-[#6] Search
-[#7 ... [TRUNCATED] ... V-G
-[#49] # rjd ary
-[#50] WHO FIRST REALIZED
-[#51] SARUMAN TURNED EVIL
-[#52] How AIPAC Will Fall
-[#53] uncivilized
-[#54] 33K views • 1 day ago
-[#55] TEIüRlFYlNG 'ORIGINS..
-[#56] Explore
-[#57] Shopping
-23:03:19 │ B.brain.llm          │ INFO  │ CognitiveEngine: Spatial Map contains 57 IDs available for B to point to.
-23:03:20 │ B.brain.llm          │ INFO  │ CognitiveEngine: Valid move request! B is flying to point at ID #4 -> (437.5, 124.0, 'The Lord of the Rings')
-23:03:20 │ B.physics.kinematics │ INFO  │ Kinematics: Move Request Received! Target Center: (438, 124) -> Offset Destination: (448, 2)
-23:03:21 │ B.brain.llm          │ INFO  │ B: [EXCITED] <MOVE:4> ah, found it! [PROUD] the lord of the rings is right here! [SMILE] want to watch it?
-23:03:21 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
-23:03:21 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
-23:03:21 │ B.brain.autonomy     │ INFO  │ User is focused. B will be more subtle.
-23:03:21 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=375.1ms, spatial_nodes=0)  [375.1 ms]
-23:03:21 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
-23:03:22 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:TextControl', q=0.11, len=75, t=28.8ms, spatial_nodes=1)  [28.8 ms]
-23:03:22 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
-23:03:26 │ B.physics.kinematics │ INFO  │ Pointing duration expired. Returning to wander mode.
-23:03:30 │ B.audio.speaker      │ INFO  │ Audio playback finished and LLM idle, publishing b_finished_speaking
-23:03:32 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'YouTube and 5 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
-23:03:32 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
-23:03:32 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=257.6ms, spatial_nodes=0)  [257.7 ms]
-23:03:32 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
-23:03:32 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:TextControl', q=0.11, len=75, t=26.5ms, spatial_nodes=1)  [26.5 ms]
-23:03:32 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
-23:03:33 │ B.brain.soul         │ INFO  │ StateMachine: Work Mode Deactivated (Restored: sad)
-23:03:33 │ B.brain.autonomy     │ INFO  │ Autonomy adjusted for Work Mode: False (Interval: 193.0s)
-23:03:33 │ B.main               │ INFO  │ 💼 Work Mode: OFF
-23:03:36 │ B.main               │ INFO  │ ═══ Kill switch activated ═══
-23:03:36 │ B.main               │ INFO  │ ═══ B is sleeping ═══ (exit code: 0)
+12:11:32 │ B.main               │ INFO  │ ═══ B is waking up ═══
+12:11:32 │ B.main               │ INFO  │ Screen geometry: 1920x1080 at (0,0)
+12:11:32 │ B.physics.kinematics │ INFO  │ KinematicsEngine initialized (screen: 1920x1080, start: 1720,100)
+12:11:32 │ B.ui.overlay         │ INFO  │ WindowManager initialized (180x112 canvas)
+12:11:32 │ B.ui.face            │ INFO  │ FaceRenderer initialized (180x112, morph transitions)
+12:11:32 │ B.ui.input           │ INFO  │ InputBox initialized
+12:11:32 │ B.brain.soul         │ INFO  │ StateMachine initialized (Live-Stream Buffer Restored)
+12:11:32 │ B.brain.llm          │ INFO  │ Initializing Groq Engine (Model: llama-3.3-70b-versatile)...
+12:11:33 │ B.brain.llm          │ INFO  │ Groq Engine ready.
+12:11:33 │ B.brain.llm          │ INFO  │ CognitiveEngine initialized
+12:11:33 │ B.vision.semantic    │ INFO  │ Extraction worker loop started
+12:11:33 │ B.vision.semantic    │ INFO  │ SemanticVisionSensor started | rate_limit=4.0s | uia_timeout=1.5s
+12:11:33 │ B.vision.capture     │ INFO  │ VisionSensor (mss) initialized | Listening for semantic fallbacks
+12:11:33 │ B.sensors.window_tracker │ INFO  │ WindowTracker started | strategy=WinEventHook | debounce=150ms
+12:11:33 │ B.sensors.window_tracker │ INFO  │ ✓ WinEvent hook installed (handle=0x1858014B)
+12:11:33 │ B.sensors.window_tracker │ INFO  │ 🔎 FOCUS → [BROWSER        ] 'New Tab and 7 more pages - Personal - Microsoft​ Edge Beta' (msedge.exe pid=22812)  [0.3 ms]
+12:11:33 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'New Tab and 7 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
+12:11:33 │ B.brain.autonomy     │ INFO  │ AutonomyEngine (Loop) initialized
+12:11:33 │ B.audio.speaker      │ INFO  │ Robo-VoiceEngine initialized
+12:11:33 │ B.ui.overlay         │ INFO  │ Click-through applied (HWND=0x000C028C)
+12:11:33 │ B.main               │ INFO  │ Window visible and click-through enabled
+12:11:33 │ B.main               │ INFO  │ Hotkeys registered: Kill (Ctrl+Shift+Alt+Q), Input (Ctrl+Shift+Alt+B), Speak (Ctrl+Shift+Alt+V), Work (Ctrl+Shift+Alt+W)
+12:11:33 │ B.main               │ INFO  │ Tick timer started (16ms / ~62fps)
+12:11:33 │ B.main               │ INFO  │ ═══ B is alive ═══
+12:11:33 │ B.main               │ INFO  │ Kill switch: Ctrl+Shift+Alt+Q (press in any window)
+12:11:33 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+12:11:36 │ B.audio.speaker      │ INFO  │ Piper TTS & DSP Vocoder loaded successfully.
+12:11:36 │ B.brain.autonomy     │ INFO  │ User is focused. B will be more subtle.
+12:11:36 │ B.vision.capture     │ INFO  │ VisionSensor: Screenshot encoded (Size: 93.9 KB, Time: 64.93ms)
+12:11:36 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=2956.5ms, spatial_nodes=0)  [2956.6 ms]
+12:11:36 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+12:11:36 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:PaneControl', q=0.11, len=52, t=46.4ms, spatial_nodes=1)  [46.5 ms]
+12:11:36 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
+12:11:36 │ B.vision.semantic    │ INFO  │ ╚══ EXTRACTION OK  ══ source=generic_tree_walk:PaneControl    q=0.11  52→52 chars  [3185.8 ms]
+12:11:36 │ B.brain.soul         │ INFO  │ StateMachine: Work Mode Active (Base: focused)
+12:11:36 │ B.brain.autonomy     │ INFO  │ Autonomy adjusted for Work Mode: True (Interval: 25.0s)
+12:11:36 │ B.main               │ INFO  │ 💼 Work Mode: ON
+12:11:37 │ B.vision.capture     │ INFO  │ VisionSensor: Screenshot encoded (Size: 95.1 KB, Time: 28.19ms)
+12:11:42 │ B.audio.speaker      │ INFO  │ Audio playback finished and LLM idle, publishing b_finished_speaking
+12:11:45 │ B.ui.input           │ INFO  │ User spoke: B, what's on my screen?
+12:11:47 │ B.brain.llm          │ INFO  │ Work goal captured: B, what's on my screen?
+12:11:47 │ B.brain.llm          │ INFO  │ CognitiveEngine: _trigger_inference entry (mode=user_reply, current_thinking=False, aborted=False)
+12:11:47 │ B.brain.llm          │ INFO  │ Cognitive Context: TITLE: "New Tab and 7 more pages - Personal - Microsoft​ Edge Beta"
+SCREEN_CONTENT: [#1] [TEXT] C Q Search or enter web address
+[#2] [TEXT] o
+[#3] [TEXT] work mode engaged!
+[#4] [TEXT] äy 9t
+[#5] [TEXT] 26
+[#6] [TEXT] Happy late morning
+[#7] [TEXT] Beginning of Summer Frogs start singing
+12:11:47 │ B.brain.llm          │ INFO  │ CognitiveEngine: Spatial Map contains 7 IDs available for B to point to.
+12:11:47 │ B.brain.llm          │ INFO  │ CognitiveEngine: Visual query detected. Constructing multimodal payload...
+12:11:47 │ B.brain.llm          │ INFO  │ CognitiveEngine: Added system prompt (3974 chars)
+12:11:47 │ B.brain.llm          │ INFO  │ CognitiveEngine: Merging 0 history turns...
+12:11:47 │ B.brain.llm          │ INFO  │ CognitiveEngine: Embedding screenshot (B64 length: 97376)
+12:11:47 │ B.brain.llm          │ INFO  │ CognitiveEngine: Final multimodal message count: 2
+12:11:47 │ B.brain.llm          │ INFO  │ CognitiveEngine: Launching InferenceWorker thread...
+12:11:47 │ B.brain.llm          │ INFO  │ InferenceWorker: Starting request to model 'meta-llama/llama-4-scout-17b-16e-instruct'...
+12:11:47 │ B.brain.llm          │ INFO  │ GroqLLM: Preparing request for model 'meta-llama/llama-4-scout-17b-16e-instruct' (Stream=True)...
+12:11:47 │ B.brain.llm          │ INFO  │ GroqLLM: Payload size: 99.42 KB
+12:11:50 │ B.brain.llm          │ INFO  │ GroqLLM: API call returned in 3224.50ms
+12:11:50 │ B.brain.llm          │ INFO  │ GroqLLM: Wrapping stream for real-time processing...
+12:11:50 │ B.brain.llm          │ INFO  │ InferenceWorker: Stream object obtained. Iterating...
+12:11:50 │ B.brain.llm          │ INFO  │ InferenceWorker: FIRST TOKEN RECEIVED!
+12:11:51 │ B.brain.llm          │ WARNING │ Unknown emotion tag [observant] — defaulting to neutral
+12:11:51 │ B.brain.llm          │ INFO  │ B: [EXCITED] oh, work mode engaged! 
+[CURIOUS] what's on your screen? let me see... 
+[OBSERVANT] i see a bunch of green leaves as your wallpaper, with the time "12:11" and date "May 9th 2026" displayed prominently in the middle.
+12:11:51 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'New Tab and 7 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
+12:11:51 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+12:11:51 │ B.vision.capture     │ INFO  │ VisionSensor: Screenshot encoded (Size: 93.6 KB, Time: 29.39ms)
+12:11:51 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=490.0ms, spatial_nodes=0)  [490.1 ms]
+12:11:51 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+12:11:51 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:PaneControl', q=0.11, len=52, t=52.2ms, spatial_nodes=1)  [52.2 ms]
+12:11:51 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
+12:11:52 │ B.vision.capture     │ INFO  │ VisionSensor: Screenshot encoded (Size: 94.0 KB, Time: 23.55ms)
+12:12:00 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'New Tab and 7 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
+12:12:00 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+12:12:00 │ B.vision.capture     │ INFO  │ VisionSensor: Screenshot encoded (Size: 97.3 KB, Time: 20.95ms)
+12:12:00 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=479.6ms, spatial_nodes=0)  [479.7 ms]
+12:12:00 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+12:12:00 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:PaneControl', q=0.11, len=52, t=60.7ms, spatial_nodes=1)  [60.7 ms]
+12:12:00 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
+12:12:01 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'New Tab and 7 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
+12:12:01 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+12:12:01 │ B.vision.capture     │ INFO  │ VisionSensor: Screenshot encoded (Size: 94.0 KB, Time: 37.61ms)
+12:12:01 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=663.1ms, spatial_nodes=0)  [663.2 ms]
+12:12:01 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+12:12:01 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:PaneControl', q=0.11, len=52, t=53.8ms, spatial_nodes=1)  [53.8 ms]
+12:12:01 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
+12:12:02 │ B.brain.autonomy     │ INFO  │ Triggering proactive thought (Work Mode: True, App: browser)
+12:12:02 │ B.brain.llm          │ INFO  │ 🧠 B is analyzing screen context... (Task: work)
+12:12:02 │ B.brain.llm          │ INFO  │ CognitiveEngine: _trigger_inference entry (mode=work, current_thinking=False, aborted=False)
+12:12:02 │ B.brain.llm          │ INFO  │ Cognitive Context: TITLE: "New Tab and 7 more pages - Personal - Microsoft​ Edge Beta"
+SCREEN_CONTENT: [#1] [TEXT] C Q Search or enter web address
+[#2] [TEXT] o
+[#3] [TEXT] äy 9t
+[#4] [TEXT] let me seem
+[#5] [TEXT] 26
+[#6] [TEXT] Happy late morning
+[#7] [TEXT] Beginning of Summer Frogs start singing
+12:12:02 │ B.brain.llm          │ INFO  │ CognitiveEngine: Spatial Map contains 7 IDs available for B to point to.
+12:12:02 │ B.brain.llm          │ INFO  │ CognitiveEngine: Launching InferenceWorker thread...
+12:12:02 │ B.brain.llm          │ INFO  │ InferenceWorker: Starting request to model 'llama-3.3-70b-versatile'...
+12:12:02 │ B.brain.llm          │ INFO  │ GroqLLM: Preparing request for model 'llama-3.3-70b-versatile' (Stream=True)...
+12:12:02 │ B.brain.llm          │ INFO  │ GroqLLM: Payload size: 9.80 KB
+12:12:02 │ B.brain.llm          │ INFO  │ GroqLLM: API call returned in 362.89ms
+12:12:02 │ B.brain.llm          │ INFO  │ GroqLLM: Wrapping stream for real-time processing...
+12:12:02 │ B.brain.llm          │ INFO  │ InferenceWorker: Stream object obtained. Iterating...
+12:12:02 │ B.brain.llm          │ INFO  │ InferenceWorker: FIRST TOKEN RECEIVED!
+12:12:03 │ B.brain.llm          │ WARNING │ Unknown emotion tag [analytical] — defaulting to neutral
+12:12:03 │ B.brain.llm          │ WARNING │ Unknown emotion tag [informative] — defaulting to neutral
+12:12:03 │ B.brain.llm          │ WARNING │ Unknown emotion tag [helpful] — defaulting to neutral
+12:12:03 │ B.brain.llm          │ INFO  │ B: [DELIGHTED] and, of course, your browser! [ANALYTICAL] it looks like you have 8 tabs open, including this one. [INFORMATIVE] the current tab says "New Tab" and has a search bar with the prompt "C Q Search or enter web address". [HELPFUL] would you like me to help with that search?
+12:12:03 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'New Tab and 7 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
+12:12:03 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+12:12:03 │ B.vision.capture     │ INFO  │ VisionSensor: Screenshot encoded (Size: 94.6 KB, Time: 23.08ms)
+12:12:03 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=751.8ms, spatial_nodes=0)  [751.9 ms]
+12:12:03 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+12:12:03 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:PaneControl', q=0.11, len=52, t=114.0ms, spatial_nodes=1)  [114.0 ms]
+12:12:03 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
+12:12:13 │ B.vision.capture     │ INFO  │ VisionSensor: Screenshot encoded (Size: 94.3 KB, Time: 25.41ms)
+12:12:13 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'New Tab and 7 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
+12:12:13 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+12:12:14 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=647.7ms, spatial_nodes=0)  [647.8 ms]
+12:12:14 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+12:12:14 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:PaneControl', q=0.11, len=52, t=115.5ms, spatial_nodes=1)  [115.6 ms]
+12:12:14 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
+12:12:24 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'New Tab and 7 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
+12:12:24 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+12:12:25 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=1469.2ms, spatial_nodes=0)  [1469.4 ms]
+12:12:25 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+12:12:25 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:PaneControl', q=0.11, len=52, t=140.9ms, spatial_nodes=1)  [141.1 ms]
+12:12:25 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
+12:12:25 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'New Tab and 7 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
+12:12:25 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+12:12:26 │ B.brain.autonomy     │ INFO  │ Triggering proactive thought (Work Mode: True, App: browser)
+12:12:26 │ B.brain.llm          │ INFO  │ 🧠 B is analyzing screen context... (Task: work)
+12:12:26 │ B.brain.llm          │ INFO  │ CognitiveEngine: _trigger_inference entry (mode=work, current_thinking=False, aborted=False)
+12:12:26 │ B.brain.llm          │ INFO  │ Cognitive Context: TITLE: "New Tab and 7 more pages - Personal - Microsoft​ Edge Beta"
+SCREEN_CONTENT: [#1] [TEXT] C Q Search or enter web address
+[#2] [TEXT] o
+[#3] [TEXT] 9t ? 26
+[#4] [TEXT] and, of course, your browser!
+[#5] [TEXT] Happy late morning
+[#6] [TEXT] Beginning of Summer Frogs start singing
+12:12:26 │ B.brain.llm          │ INFO  │ CognitiveEngine: Spatial Map contains 6 IDs available for B to point to.
+12:12:26 │ B.brain.llm          │ INFO  │ CognitiveEngine: Launching InferenceWorker thread...
+12:12:26 │ B.brain.llm          │ INFO  │ InferenceWorker: Starting request to model 'llama-3.3-70b-versatile'...
+12:12:26 │ B.brain.llm          │ INFO  │ GroqLLM: Preparing request for model 'llama-3.3-70b-versatile' (Stream=True)...
+12:12:26 │ B.brain.llm          │ INFO  │ GroqLLM: Payload size: 10.10 KB
+12:12:26 │ B.brain.llm          │ INFO  │ GroqLLM: API call returned in 170.51ms
+12:12:26 │ B.brain.llm          │ INFO  │ GroqLLM: Wrapping stream for real-time processing...
+12:12:26 │ B.brain.llm          │ INFO  │ InferenceWorker: Stream object obtained. Iterating...
+12:12:26 │ B.brain.llm          │ INFO  │ InferenceWorker: FIRST TOKEN RECEIVED!
+12:12:27 │ B.brain.llm          │ WARNING │ Unknown emotion tag [inquisitive] — defaulting to neutral
+12:12:27 │ B.brain.llm          │ INFO  │ B: [PLAYFUL] also, i see some random text on the screen, like "9t ? 26" and "Happy late morning" and "Beginning of Summer Frogs start singing". [CURIOUS] what's the story behind those? [INQUISITIVE] are you writing something or just browsing around?
+12:12:27 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=1880.3ms, spatial_nodes=0)  [1880.4 ms]
+12:12:27 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+12:12:27 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:PaneControl', q=0.11, len=52, t=72.2ms, spatial_nodes=1)  [72.3 ms]
+12:12:27 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
+12:12:27 │ B.vision.semantic    │ INFO  │ ╔══ EXTRACTION BEGIN ══ [BROWSER        ] 'New Tab and 7 more pages - Personal - Microsoft\u200b Edge Beta'  (proc=msedge.exe hwnd=0xC077C)
+12:12:27 │ B.vision.semantic    │ INFO  │ Step 2  Strategy → _strategy_browser
+12:12:28 │ B.vision.semantic    │ INFO  │ Step 2  ExtractionResult(source='browser_document', q=0.00, len=0, t=1063.8ms, spatial_nodes=0)  [1063.9 ms]
+12:12:28 │ B.vision.semantic    │ INFO  │ Step 3  Primary weak (q=0.00 len=0) — running generic fallback
+12:12:28 │ B.vision.semantic    │ INFO  │ Step 3  Fallback: ExtractionResult(source='generic_tree_walk:PaneControl', q=0.11, len=52, t=88.1ms, spatial_nodes=1)  [88.2 ms]
+12:12:28 │ B.vision.semantic    │ INFO  │ Step 3  Accepting fallback (0.11 > 0.00)
+12:12:33 │ B.brain.soul         │ INFO  │ StateMachine: Work Mode Deactivated (Restored: sad)
+12:12:33 │ B.brain.autonomy     │ INFO  │ Autonomy adjusted for Work Mode: False (Interval: 219.0s)
+12:12:33 │ B.main               │ INFO  │ 💼 Work Mode: OFF
+12:12:34 │ B.main               │ INFO  │ ═══ Kill switch activated ═══
+12:12:34 │ B.main               │ INFO  │ ═══ B is sleeping ═══ (exit code: 0)

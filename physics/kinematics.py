@@ -56,13 +56,15 @@ DAMPING_C        = 0.92     # Velocity damping per tick (0.92 = heavy smoothing)
 MASS             = 1.0      # Unit mass (simplifies force→acceleration)
 EDGE_REPULSE_K   = 0.05     # Edge repulsion spring stiffness
 EDGE_MARGIN      = 80       # px — how close to edge before repulsion kicks in
-MAX_VELOCITY     = 8.0      # px/tick — speed cap to prevent wild movement
+MAX_VELOCITY     = 12.0     # px/tick — speed cap to prevent wild movement
 WANDER_MIN_SEC   = 4.0      # Minimum seconds between wander target changes
 WANDER_MAX_SEC   = 8.0      # Maximum seconds between wander target changes
 FACE_W           = 180      # px — must match ui/overlay.py CANVAS_W
 FACE_H           = 112      # px — must match ui/overlay.py CANVAS_H
 SCREEN_PADDING   = 20       # px — minimum distance from absolute screen edge
 FOLLOW_RADIUS    = 220      # px — B stays on the edge of this circle in Follow mode
+WANDER_REST_SEC  = 15.0     # px — minimum time B stays at a deliberate target
+WANDER_CHANCE_CORNER = 0.6  # 60% chance to return to a corner instead of a UI element
 
 
 class KinematicsEngine:
@@ -140,6 +142,10 @@ class KinematicsEngine:
         # Subscribe to behavior changes
         self._bus.subscribe("b_set_behavior", self._on_set_behavior)
         self._bus.subscribe("b_move_request", self._on_move_request)
+        self._bus.subscribe("context_updated", self._on_context_updated)
+        
+        # Spatial Awareness for deliberate wandering
+        self._last_spatial_map = {}
         
         # Pointing state
         self._point_start_time = 0.0
@@ -240,9 +246,9 @@ class KinematicsEngine:
             else:
                 damping = 0.94 # Less resistance (more slide)
         elif self._mode == "point":
-            # Snappy movement for pointing
-            k = 0.10
-            damping = 0.85
+            # Snappy, high-speed movement for pointing
+            k = 0.18
+            damping = 0.82
 
         fx = -k * dx
         fy = -k * dy
@@ -379,26 +385,49 @@ class KinematicsEngine:
 
     def _pick_new_wander_target(self) -> None:
         """
-        Select a new random point on screen for B to drift toward.
-
-        The target is constrained to the "safe zone" — far enough from
-        screen edges that B won't immediately trigger edge repulsion
-        on arrival.
+        Select a new point for B to drift toward. 
+        Instead of pure randomness, we now prioritize:
+        1. Screen corners (resting positions)
+        2. Known UI elements (deliberate inspection)
         """
-        margin_x = EDGE_MARGIN + FACE_W + SCREEN_PADDING
-        margin_y = EDGE_MARGIN + FACE_H + SCREEN_PADDING
-        self._target_x = random.uniform(
-            self._screen_x + margin_x,
-            self._screen_x + self._screen_w - margin_x,
-        )
-        self._target_y = random.uniform(
-            self._screen_y + margin_y,
-            self._screen_y + self._screen_h - margin_y,
-        )
+        now = time.monotonic()
+        
+        # 60% chance to go to a resting corner, or if no UI elements are known
+        if random.random() < WANDER_CHANCE_CORNER or not self._last_spatial_map:
+            # Pick one of the four corners (with padding)
+            corners = [
+                (self._screen_x + SCREEN_PADDING + 50, self._screen_y + SCREEN_PADDING + 50), # Top Left
+                (self._screen_x + self._screen_w - FACE_W - 50, self._screen_y + SCREEN_PADDING + 50), # Top Right
+                (self._screen_x + self._screen_w - FACE_W - 50, self._screen_y + self._screen_h - FACE_H - 100), # Bottom Right
+                (self._screen_x + SCREEN_PADDING + 50, self._screen_y + self._screen_h - FACE_H - 100), # Bottom Left
+            ]
+            self._target_x, self._target_y = random.choice(corners)
+            logger.debug("Deliberate Wander: Resting in corner at (%.0f, %.0f)", self._target_x, self._target_y)
+        else:
+            # Pick a random UI element to "inspect"
+            target_id = random.choice(list(self._last_spatial_map.keys()))
+            data = self._last_spatial_map[target_id]
+            
+            # Use the dict format we standardized earlier
+            if isinstance(data, dict):
+                tx, ty = data["coords"]
+            else:
+                tx, ty = data[0], data[1] # Fallback for legacy
+            
+            # Float NEAR the element, don't cover it
+            self._target_x = float(tx + 40)
+            self._target_y = float(ty - FACE_H - 20)
+            logger.debug("Deliberate Wander: Inspecting element [#%s] at (%.0f, %.0f)", target_id, self._target_x, self._target_y)
 
-        logger.debug(
-            "New wander target: (%.0f, %.0f)", self._target_x, self._target_y
-        )
+        self._last_wander_time = now
+        # Slow down the wandering! Rest for 12-25 seconds at each spot.
+        self._wander_interval = random.uniform(12.0, 25.0)
+
+    def _on_context_updated(self, payload: dict) -> None:
+        """Keep track of screen elements for deliberate movement."""
+        new_map = payload.get("spatial_map", {})
+        if new_map:
+            self._last_spatial_map = new_map
 
     def _on_move_request(self, payload: dict) -> None:
         """Handle a direct coordinate movement request (usually from LLM)."""

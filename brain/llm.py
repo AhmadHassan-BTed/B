@@ -20,6 +20,7 @@ import re
 import json
 import hashlib
 import time
+import threading
 from typing import TYPE_CHECKING, Any, Optional
 
 from PyQt6.QtCore import QObject, QThread, pyqtSignal, QTimer
@@ -34,6 +35,7 @@ logger = logging.getLogger("B.brain.llm")
 
 GROQ_API_KEY = "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"
 GROQ_MODEL = "llama-3.3-70b-versatile"
+GROQ_VISION_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct"
 
 # ──────────────────────────────────────────────────────────────────────────────
 # SYSTEM PROMPT
@@ -50,10 +52,15 @@ Be extremely expressive, almost like a cartoon character. Protray your emotions 
 
 VISION AWARENESS:
 - You have REAL-TIME EYES. You can see exactly what is on your pal's screen (active window, text, code, websites).
+- You can ALSO see pixels now! If the user asks about an image, a wallpaper, a color, or something visual, a Vision model will help you "see" it.
 - Use what you see to start conversations, offer help, or make funny observations.
+- UI ELEMENTS are tagged with semantics like [BUTTON], [LINK], [EDIT], [TEXT], or [LISTITEM].
+- Use this knowledge! Instead of "i see the word search", say "i see the search button" or "i see the edit box".
 - If your pal asks "what's on my screen?", use the provided [USER'S SCREEN RIGHT NOW] or [LAST RELEVANT CONTEXT] to describe it accurately.
 - IMPORTANT: NEVER CLAIM you cannot see the screen. You always have visual context. If the current context is sparse, use the last relevant context provided.
 - If the current window is just "B", it's probably just your own interface — look at the "Last Relevant Context" instead.
+- IGNORE INTERNAL STATUS: Ignore messages like "work mode engaged!" or "B is thinking...". These are your own status updates, not part of the user's content.
+- NARRATION: Do NOT narrate your own technical process. Don't say "let me look at your screen" or "checking now". Just say what you see naturally.
 - PROHIBITION: Do not use the words 'project', 'line', 'code', or 'developer' unless the screen actually contains code.
 
 WHO B IS:
@@ -301,7 +308,7 @@ class GroqLLM:
         
         # Filter kwargs to only those Groq supports
         groq_params = {
-            "model": self.model,
+            "model": kwargs.get("model", self.model),
             "messages": messages,
             "temperature": kwargs.get("temperature", 0.7),
             "max_tokens": kwargs.get("max_tokens", 1024),
@@ -315,10 +322,20 @@ class GroqLLM:
             if isinstance(stop, str): stop = [stop]
             groq_params["stop"] = stop[:4]
 
-        response = self.client.chat.completions.create(**groq_params)
+        logger.info("GroqLLM: Preparing request for model '%s' (Stream=%s)...", groq_params['model'], stream)
+        msg_json = json.dumps(messages)
+        logger.info("GroqLLM: Payload size: %.2f KB", len(msg_json)/1024)
         
+        start_t = time.time()
+        try:
+            response = self.client.chat.completions.create(**groq_params)
+            logger.info("GroqLLM: API call returned in %.2fms", (time.time() - start_t) * 1000)
+        except Exception as api_err:
+            logger.error("GroqLLM: API call failed: %s", api_err)
+            raise
+
         if stream:
-            # We wrap the Groq stream to match the dict-based structure of llama-cpp-python
+            logger.info("GroqLLM: Wrapping stream for real-time processing...")
             return self._wrap_stream(response)
         return response
 
@@ -338,15 +355,16 @@ class GroqLLM:
 # INFERENCE WORKER
 # ──────────────────────────────────────────────────────────────────────────────
 
-class InferenceWorker(QObject):
+class InferenceWorker(QThread):
     finished = pyqtSignal(str)
     chunk_ready = pyqtSignal(str)
     sentence_ready = pyqtSignal(dict) # Emits {"emotion": str, "text": str}
 
-    def __init__(self, messages: list[dict[str, str]], llm_instance: Any = None):
+    def __init__(self, messages: list[dict[str, str]], llm_instance: Any = None, model: str = None):
         super().__init__()
         self.messages = messages
         self.llm = llm_instance
+        self.model = model
         self.aborted = False
 
     def run(self) -> None:
@@ -355,22 +373,29 @@ class InferenceWorker(QObject):
             return
 
         try:
+            logger.info("InferenceWorker: Starting request to model '%s'...", self.model or "default")
             stream = self.llm.create_chat_completion(
                 messages=self.messages,
+                model=self.model,
                 max_tokens=120,
                 temperature=0.6,
                 top_p=0.9,
-                repeat_penalty=1.15,
                 stop=["User:", "B:", "System:", "\n\n", "Phi:", "===", "support:", "Support:", "pal:", "Pal:"],
                 stream=True,
             )
-
+            logger.info("InferenceWorker: Stream object obtained. Iterating...")
+            
             full_text = ""
             current_buffer = ""
+            first_token_received = False
             
             for chunk in stream:
+                if not first_token_received:
+                    logger.info("InferenceWorker: FIRST TOKEN RECEIVED!")
+                    first_token_received = True
+                
                 if self.aborted:
-                    logger.info("Inference worker aborted.")
+                    logger.info("InferenceWorker: ABORTED by system.")
                     return
                 if "choices" in chunk and chunk["choices"]:
                     delta = chunk["choices"][0].get("delta", {})
@@ -438,10 +463,14 @@ class CognitiveEngine(QObject):
         self._bus = bus
         self._llm = None
         self._worker: Optional[InferenceWorker] = None
-        self._thread: Optional[QThread] = None
         self._is_thinking = False
         self._aborted = False
         self._work_mode = False
+        
+        # Watchdog to prevent getting "stuck" in thinking state
+        self._thinking_watchdog = QTimer()
+        self._thinking_watchdog.setSingleShot(True)
+        self._thinking_watchdog.timeout.connect(self._on_thinking_timeout)
         self._work_goal = ""
         self._awaiting_work_goal = False
         self._last_proactive_hash = ""
@@ -449,6 +478,7 @@ class CognitiveEngine(QObject):
         self._current_context = ""
         self._last_context_quality = 0.0
         self._last_context_time = 0.0
+        self._latest_screenshot_b64 = ""
         self._history: list[dict[str, str]] = []
         self._commitments: list[str] = []
         self._memory_path = "brain/memory.json"
@@ -570,23 +600,16 @@ class CognitiveEngine(QObject):
         self._last_context_quality = quality
         self._last_context_time = now
         self._current_context = "\n".join(parts)
-        
-        # CRITICAL: Only overwrite the spatial map if the new payload actually
-        # contains spatial data. OCR payloads (mss_capture) don't have spatial
-        # coordinates, so they would erase valid semantic data if we blindly set.
-        new_spatial = payload.get("spatial_map", {})
-        if new_spatial:
-            self._spatial_map = new_spatial
-            logger.debug("Spatial map updated: %d nodes", len(new_spatial))
+        self._spatial_map = payload.get("spatial_map", {})
+        self._latest_screenshot_b64 = payload.get("screenshot_b64", "")
         
         if quality >= 0.4:
             self._last_high_quality_context = self._current_context
             self._last_high_quality_time = now
         
         # Extensive console logging for transparency
-        if self._work_mode:
+        if self._work_mode and quality > 0.5:
             app_type = payload.get("app_type", "unknown")
-            quality = payload.get("quality_score", 0.0)
             source = payload.get("extraction_source", "legacy")
             
             print("\n" + "═"*80)
@@ -611,7 +634,6 @@ class CognitiveEngine(QObject):
         if not window_title and not screen_text:
             # Fallback to the latest known context if payload is empty
             if self._current_context:
-                # We can't easily split it back, so we just use it as the title/text combo
                 window_title = "Latest Context"
                 screen_text = self._current_context
             else:
@@ -634,108 +656,122 @@ class CognitiveEngine(QObject):
                 f"If there is a clear opportunity to help, suggest a next step, "
                 f"highlight a key insight, or offer a summary. "
                 f"IF THERE IS NO CLEAR ACTIONABLE HELP TO PROVIDE, OR IF THE CONTENT IS IRRELEVANT, YOU MUST RESPOND WITH EXACTLY '[SILENCE]'. "
-                f"DO NOT MAKE UP CONVERSATION. BE A SILENT OBSERVER UNLESS NEEDED. "
             )
         elif mode == "follow":
             prompt = (
                 f"[SYSTEM] You are currently following the user's cursor to help them. "
                 f"You see they are looking at: \"{context}\". "
                 f"Ask a helpful or curious question about this specific work to assist or learn from them. "
-                f"Be attentive and supportive. Start with an emotion tag."
             )
         else:
             prompt = (
                 f"[SYSTEM] You are wandering around the screen. "
                 f"You noticed: \"{context}\". "
-                f"Make a playful, observational, or curious comment to pass the time. "
-                f"Be relaxed and organic. Start with an emotion tag."
+                f"Make a playful, observational, or curious comment to pass the time."
             )
         
-        # Instead of polluting history, we pass this as a temporary nudge
         logger.info(f"🧠 B is analyzing screen context... (Task: {mode})")
         self.proactive_thinking_signal.emit(prompt, mode)
 
-    def _trigger_inference(self, nudge_prompt: str = "", mode: str = "proactive") -> None:
-        # Safety: ensure any previous thread is fully stopped before starting a new one
-        self._stop_current_inference()
+    def _on_thinking_timeout(self) -> None:
+        """Safety reset if inference hangs for too long."""
+        if self._is_thinking:
+            logger.warning("CognitiveEngine: Inference watchdog triggered! Resetting thinking state.")
+            self._stop_current_inference()
+            self._is_thinking = False
+            self._bus.publish("b_thinking_finished", {})
 
+    def _trigger_inference(self, nudge_prompt: str = "", mode: str = "proactive") -> None:
+        logger.info("CognitiveEngine: _trigger_inference entry (mode=%s, current_thinking=%s, aborted=%s)", mode, self._is_thinking, self._aborted)
+        if self._is_thinking or self._aborted:
+            logger.info("CognitiveEngine: Trigger ignored (busy or aborted)")
+            return
+        
         self._is_thinking = True
-        self._moved_this_turn = False # Reset move tracker for the new response turn
+        self._moved_this_turn = False
         self._bus.publish("b_thinking", {"mode": mode})
         
-        if len(self._history) > self._MAX_HISTORY:
-            self._history.pop(0)
+        # Start watchdog (45 seconds)
+        self._thinking_watchdog.start(45000)
 
-        self._thread = QThread()
-        self._thread.setObjectName("InferenceThread-Proactive")
-        self._worker = InferenceWorker(self._build_messages(nudge_prompt), self._llm)
-        self._worker.moveToThread(self._thread)
-
-        self._thread.started.connect(self._worker.run)
+        # Check if we should use the Vision model for this request
+        use_vision = False
+        last_user_msg = ""
+        if self._history and self._history[-1]["role"] == "user":
+            last_user_msg = self._history[-1]["content"].lower()
+            visual_keywords = ["wallpaper", "image", "visual", "look at", "see", "color", "displaying", "picture", "photo", "screen", "what's this", "what is this", "background", "showing"]
+            if any(k in last_user_msg for k in visual_keywords):
+                use_vision = True
+        
+        messages = self._build_messages(nudge_prompt)
+        
+        if use_vision and self._latest_screenshot_b64:
+            logger.info("CognitiveEngine: Visual query detected. Constructing multimodal payload...")
+            vision_msgs = []
+            sys_msg = SYSTEM_PROMPT + "\n\nIMPORTANT: You are looking at a screenshot of the user's screen. Describe visual details naturally."
+            vision_msgs.append({"role": "system", "content": sys_msg})
+            logger.info("CognitiveEngine: Added system prompt (%d chars)", len(sys_msg))
+            
+            # Add history (excluding the last user message which we will format with image)
+            logger.info("CognitiveEngine: Merging %d history turns...", len(self._history[:-1]))
+            for m in self._history[:-1]:
+                vision_msgs.append(m)
+            
+            # The actual visual request
+            logger.info("CognitiveEngine: Embedding screenshot (B64 length: %d)", len(self._latest_screenshot_b64))
+            user_content = [
+                {"type": "text", "text": self._history[-1]["content"]},
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:image/jpeg;base64,{self._latest_screenshot_b64}"
+                    }
+                }
+            ]
+            vision_msgs.append({"role": "user", "content": user_content})
+            
+            logger.info("CognitiveEngine: Final multimodal message count: %d", len(vision_msgs))
+            self._worker = InferenceWorker(vision_msgs, self._llm, model=GROQ_VISION_MODEL)
+        else:
+            self._worker = InferenceWorker(messages, self._llm, model=GROQ_MODEL)
+            
         self._worker.chunk_ready.connect(self._on_chunk_ready)
         self._worker.sentence_ready.connect(self._on_sentence_ready)
         self._worker.finished.connect(self._on_inference_finished)
-        self._worker.finished.connect(self._thread.quit)
-        self._worker.finished.connect(self._worker.deleteLater)
-        self._thread.finished.connect(self._thread.deleteLater)
-
-        self._thread.start()
+        
+        logger.info("CognitiveEngine: Launching InferenceWorker thread...")
+        self._worker.start()
 
     def _on_user_spoke(self, payload: dict) -> None:
         text = payload.get("text", "").strip()
         if not text:
             return
 
-        # Always stop any current inference before handling new input
-        self._stop_current_inference()
-
-        self._aborted = False # Reset for new input
-        self._last_proactive_hash = "" # Reset hash on user interaction
-        # source helps distinguish voice vs typing
-        source = payload.get("source", "typing")
+        self._aborted = False 
+        self._last_proactive_hash = "" 
         
         # Immediate visual feedback
         self._bus.publish("b_thinking")
-        
-        # Request immediate vision scan to have fresh context for the response
         self._bus.publish("request_vision_refresh", {})
         
-        if source == "voice":
-            # Natural pause for voice conversations
-            logger.info("Voice detected - adding 1.5s natural pause before responding...")
-            import threading
+        if payload.get("source", "typing") == "voice":
             threading.Timer(1.5, lambda: self.start_thinking_signal.emit(text)).start()
         else:
-            # Wait 1.2s for vision refresh to land (crucial for accurate responses)
             QTimer.singleShot(1200, lambda: self.start_thinking_signal.emit(text))
 
     def _start_thinking(self, text: str) -> None:
-        """Internal helper to actually launch the LLM thread."""
         if self._awaiting_work_goal:
-            # Capture the first thing they say after Work Mode starts as their goal
             self._work_goal = text
             self._awaiting_work_goal = False
-            self._last_proactive_hash = "" # Reset hash for new goal
+            self._last_proactive_hash = ""
             logger.info("Work goal captured: %s", self._work_goal)
+            # Instead of a hardcoded message, we'll let the LLM generate a dynamic one.
+            # We add a hidden nudge to the prompt to ensure he acknowledges the goal.
+            text = f"[SYSTEM: User just defined their goal: {self._work_goal}. Just acknowledge this naturally while responding to their message!] " + text
             
-            # Acknowledge the goal
-            msg = f"[CONFIDENT] got it! [FOCUSED] i'll keep an eye on your work on {self._work_goal}. [SMILE] let's get it done!"
-            self._bus.publish("llm_response", {"text": msg})
-            sentences = parse_sentences(msg)
-            for s in sentences:
-                self._bus.publish("b_spoke", s)
-            
-            self._is_thinking = False
-            self._bus.publish("b_finished_speaking")
-            
-            # IMMEDIATELY trigger the first analysis of the screen now that we have a goal
-            logger.info("Triggering immediate screen analysis for new goal...")
+            # Immediately trigger a vision refresh so the response is context-aware
             self._bus.publish("request_vision_refresh", {})
-            # Wait just enough for the vision thread to finish its forced scan
-            def _delayed_proactive():
-                self._on_trigger_proactive_thought({"mode": "work"})
-            QTimer.singleShot(800, _delayed_proactive)
-            return
+            # We'll continue to the regular inference below.
 
         if self._aborted: # Check if user interrupted during the 1.5s pause
             self._aborted = False
@@ -744,8 +780,6 @@ class CognitiveEngine(QObject):
         # Safety: ensure any previous thread is fully stopped
         self._stop_current_inference()
         
-        self._is_thinking = True
-        self._moved_this_turn = False # Reset move tracker for the new response turn
         self._bus.publish("b_thinking", {"mode": "user_reply"}) # Notify vision sensors to pause
         # b_thinking already published in _on_user_spoke
 
@@ -760,44 +794,26 @@ class CognitiveEngine(QObject):
         if len(self._history) > self._MAX_HISTORY:
             self._history.pop(0)
 
-        self._thread = QThread()
-        self._thread.setObjectName("InferenceThread-User")
-        self._worker = InferenceWorker(self._build_messages(), self._llm)
-        self._worker.moveToThread(self._thread)
-
-        self._thread.started.connect(self._worker.run)
-        self._worker.chunk_ready.connect(self._on_chunk_ready)
-        self._worker.sentence_ready.connect(self._on_sentence_ready)
-        self._worker.finished.connect(self._on_inference_finished)
-        self._worker.finished.connect(self._thread.quit)
-        self._worker.finished.connect(self._worker.deleteLater)
-        self._thread.finished.connect(self._thread.deleteLater)
-
-        self._thread.start()
+        # Trigger the unified inference pipeline
+        self._trigger_inference(mode="user_reply")
 
     def _stop_current_inference(self) -> None:
         """Helper to safely abort and join the current inference thread."""
         if self._worker:
             try:
                 self._worker.aborted = True
+                if self._worker.isRunning():
+                    logger.info("Stopping previous inference worker...")
+                    self._worker.quit()
+                    if not self._worker.wait(2000):
+                        logger.warning("Inference worker did not stop in time, terminating.")
+                        self._worker.terminate()
+                        self._worker.wait()
             except RuntimeError:
-                self._worker = None
-
-        if self._thread:
-            try:
-                if self._thread.isRunning():
-                    logger.info("Stopping previous inference thread...")
-                    self._thread.quit()
-                    # Use a timeout just in case it's truly stuck, though llama-cpp usually responds fast
-                    if not self._thread.wait(2000):
-                        logger.warning("Thread did not stop in time, terminating.")
-                        self._thread.terminate()
-                        self._thread.wait()
-            except RuntimeError:
-                # Underlying C++ object already deleted by Qt's deleteLater()
                 pass
-            self._thread = None
+            self._worker = None
         self._is_thinking = False
+        self._thinking_watchdog.stop()
 
     def _build_messages(self, nudge_prompt: str = "") -> list[dict[str, str]]:
         system_content = SYSTEM_PROMPT
@@ -808,7 +824,8 @@ class CognitiveEngine(QObject):
             id_list = ", ".join(f"#{k}" for k in sorted(self._spatial_map.keys(), key=lambda x: int(x)))
             spatial_instr = (
                 "\n\nSPATIAL AWARENESS (ACTIVE):\n"
-                "- You can see the screen coordinates! Text blocks have IDs like [#1], [#2], etc.\n"
+                "- You can see the screen coordinates! UI elements have IDs like [#1], [#2], etc.\n"
+                "- UI elements also have SEMANTIC TAGS like [BUTTON] or [LINK]. Use these to identify what things are!\n"
                 "- YOU CAN FLY! To move B and point at something, use <MOVE:id> after your emotion tag.\n"
                 "- Example: [EXCITED] <MOVE:4> check this out! [PROUD] <MOVE:12> i found it right here!\n"
                 "- ONLY use IDs you see in the current context. You can move once per sentence.\n"
@@ -832,9 +849,17 @@ class CognitiveEngine(QObject):
         if self._spatial_map:
             spatial_lines = []
             for sid, data in sorted(self._spatial_map.items(), key=lambda x: int(x[0])):
-                label = data[2] if len(data) > 2 else "element"
+                # Defensive check for data format (dict vs legacy tuple)
+                if isinstance(data, dict):
+                    label = data.get("label", "element")
+                    ctype = data.get("type", "UNKNOWN")
+                else:
+                    # Legacy tuple format fallback
+                    label = data[2] if len(data) > 2 else "element"
+                    ctype = "TEXT"
+                
                 if label:
-                    spatial_lines.append(f"  [#{sid}] \"{label}\"")
+                    spatial_lines.append(f"  [#{sid}] [{ctype}] \"{label}\"")
             if spatial_lines:
                 system_content += "\n\nSCREEN ELEMENTS YOU CAN FLY TO:\n" + "\n".join(spatial_lines) + "\n"
 
@@ -918,8 +943,15 @@ class CognitiveEngine(QObject):
         move_id = sentence.get("move_id")
         if move_id and not self._moved_this_turn:
             if move_id in self._spatial_map:
-                coords = self._spatial_map[move_id]
-                logger.info("CognitiveEngine: Valid move request! B is flying to point at ID #%s -> %s", move_id, coords)
+                data = self._spatial_map[move_id]
+                if isinstance(data, dict):
+                    coords = data["coords"]
+                    ctype = data.get("type", "UNKNOWN")
+                else:
+                    coords = (data[0], data[1])
+                    ctype = "TEXT"
+                
+                logger.info("CognitiveEngine: Valid move request! B is flying to point at [%s] ID #%s -> %s", ctype, move_id, coords)
                 self._bus.publish("b_move_request", {"x": coords[0], "y": coords[1]})
                 self._moved_this_turn = True # Lock movement for this response turn
             else:
@@ -934,6 +966,7 @@ class CognitiveEngine(QObject):
         if "[SILENCE]" in result.upper():
             logger.info("B: (Analyzed screen but decided to stay silent)")
             self._is_thinking = False
+            self._thinking_watchdog.stop()
             self._bus.publish("llm_response", {"text": "[SILENCE]"})
             return
 
@@ -952,8 +985,15 @@ class CognitiveEngine(QObject):
                 move_id = s.get("move_id")
                 if move_id:
                     if move_id in self._spatial_map:
-                        coords = self._spatial_map[move_id]
-                        logger.info("CognitiveEngine: Valid move request! B is flying to point at ID #%s -> %s (fallback parse)", move_id, coords)
+                        data = self._spatial_map[move_id]
+                        if isinstance(data, dict):
+                            coords = data["coords"]
+                            ctype = data.get("type", "UNKNOWN")
+                        else:
+                            coords = (data[0], data[1])
+                            ctype = "TEXT"
+                        
+                        logger.info("CognitiveEngine: Valid move request! B is flying to point at [%s] ID #%s -> %s (fallback parse)", ctype, move_id, coords)
                         self._bus.publish("b_move_request", {"x": coords[0], "y": coords[1]})
                         self._moved_this_turn = True
                         break  # Only fly to the first valid target
@@ -966,4 +1006,5 @@ class CognitiveEngine(QObject):
         self._bus.publish("llm_response", {"text": result})
 
         self._is_thinking = False
+        self._thinking_watchdog.stop()
         self._bus.publish("b_finished_thinking", {}) # Resume vision sensors

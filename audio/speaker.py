@@ -341,14 +341,20 @@ class VoiceEngine(QObject):
                         
                     # Trigger the face and UI change exactly when the audio starts
                     # We MUST emit via signal to ensure this happens on the main GUI thread!
-                    self._publish_signal.emit("assistant_speaking_start", {})
-                    self._publish_signal.emit("emotion_changed", {"emotion": emotion, "intensity": 1.0})
-                    self._publish_signal.emit("b_playing_sentence", {"text": text, "emotion": emotion})
+                    try:
+                        self._publish_signal.emit("assistant_speaking_start", {})
+                        self._publish_signal.emit("emotion_changed", {"emotion": emotion, "intensity": 1.0})
+                        self._publish_signal.emit("b_playing_sentence", {"text": text, "emotion": emotion})
+                    except RuntimeError:
+                        return # Parent object destroyed, exit thread
 
                     # 4. Play spoken audio synchronously
                     sd.play(processed_array, samplerate=self._sample_rate, blocking=True)
                     
-                    self._publish_signal.emit("assistant_speaking_end", {})
+                    try:
+                        self._publish_signal.emit("assistant_speaking_end", {})
+                    except RuntimeError:
+                        return
                     
                     import time
                     time.sleep(0.1) # Brief safety sleep for sound card flush
@@ -357,11 +363,17 @@ class VoiceEngine(QObject):
                     # AND the LLM is not currently generating more sentences.
                     if self._queue.empty() and not self._llm_thinking:
                         logger.info("Audio playback finished and LLM idle, publishing b_finished_speaking")
-                        self._publish_signal.emit("b_finished_speaking", {})
+                        try:
+                            self._publish_signal.emit("b_finished_speaking", {})
+                        except RuntimeError:
+                            return
                     
             except Exception as e:
                 logger.exception("Error during robo-audio synthesis: %s", e)
                 # Ensure end signal is sent even on error
-                self._publish_signal.emit("assistant_speaking_end", {})
+                try:
+                    self._publish_signal.emit("assistant_speaking_end", {})
+                except RuntimeError:
+                    return
             finally:
                 self._queue.task_done()

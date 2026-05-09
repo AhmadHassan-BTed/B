@@ -121,8 +121,12 @@ class VisionSensor:
                         center_x = left + min_x + (max_x - min_x) / 2
                         center_y = top + min_y + (max_y - min_y) / 2
                         
-                        spatial_map[str(node_id)] = (center_x, center_y, line.text[:60])
-                        text_parts.append(f"[#{node_id}] {line.text}")
+                        spatial_map[str(node_id)] = {
+                            "coords": (center_x, center_y),
+                            "label": line.text[:60],
+                            "type": "TEXT"
+                        }
+                        text_parts.append(f"[#{node_id}] [TEXT] {line.text}")
                         node_id += 1
                         
                     raw_text = "\n".join(text_parts)
@@ -151,6 +155,23 @@ class VisionSensor:
                         unique_chars = len(set(raw_text[:200]))
                         quality = min(0.9, (unique_chars / 200) * 1.5) if len(raw_text) > 50 else 0.1
 
+                    self.last_screenshot_b64 = ""
+                    try:
+                        t_enc_start = time.time()
+                        # Resize for VLM context if needed (e.g. max 1024 width)
+                        vlm_img = img.copy()
+                        if vlm_img.width > 1024:
+                            vlm_img.thumbnail((1024, 1024))
+                        
+                        import io
+                        import base64
+                        buffer = io.BytesIO()
+                        vlm_img.save(buffer, format="JPEG", quality=70)
+                        self.last_screenshot_b64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
+                        logger.info("VisionSensor: Screenshot encoded (Size: %.1f KB, Time: %.2fms)", len(self.last_screenshot_b64)/1024, (time.time() - t_enc_start)*1000)
+                    except Exception as e:
+                        logger.warning(f"Failed to encode screenshot: {e}")
+
                     self._bus.publish("context_updated", {
                         "window_title": title,
                         "screen_text": raw_text,
@@ -159,6 +180,7 @@ class VisionSensor:
                         "quality_score": round(quality, 2),
                         "content_length": len(raw_text),
                         "spatial_map": spatial_map,
+                        "screenshot_b64": self.last_screenshot_b64
                     })
 
             except Exception as e:
