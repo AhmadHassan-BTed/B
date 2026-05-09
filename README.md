@@ -8,11 +8,12 @@
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![Qt](https://img.shields.io/badge/PyQt6-6.6.0+-41CD52?style=for-the-badge&logo=qt&logoColor=white)](https://www.qt.io/)
 [![License](https://img.shields.io/badge/License-MIT-F7DF1E?style=for-the-badge)](LICENSE)
+[![Privacy](https://img.shields.io/badge/Privacy-First-green?style=for-the-badge)](PRIVACY.md)
 [![Status](https://img.shields.io/badge/Status-Active_Development-blueviolet?style=for-the-badge)](https://github.com/Ahmad-Hassan-0/B---desktop-companion)
 
 **B** is not just an AI; he is a digital lifeform designed to live on your desktop. Built with a "soul-first" architecture, B observes your workflow, listens with neural precision, and interacts through a high-performance, glassmorphic overlay.
 
-[Explore the Vision](#-the-vision) • [Core Systems](#-core-systems) • [Safety First](#-safety--kill-switch) • [Getting Started](#-installation)
+[Explore the Vision](#-the-vision) • [Architecture](docs/ARCHITECTURE.md) • [Contributing](CONTRIBUTING.md) • [Privacy](PRIVACY.md) • [Getting Started](#-installation)
 
 </div>
 

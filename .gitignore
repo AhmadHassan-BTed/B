@@ -1,20 +1,54 @@
 # Python Cache
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
 
 # Python Packages/Installers
 *.whl
+dist/
+build/
+*.egg-info/
 
 # Massive AI Models (Do not push these to GitHub!)
 models/*.gguf
 models/*.onnx
+models/*.bin
+models/*.pth
 
 # Dynamic Memory/State (Keeps your local B's memory out of version control)
 brain/memory.json
+brain/knowledge_graph.json
+*.log
+b_session.log
+b_analytics.log
 
-# Scratch/Test files (Optional: uncomment if you don't want to track your scratchpad)
-# scratch/
+# Scratch/Test files
+scratch/
+temp/
+tmp/
 
-# Virtual Environments (If you ever create one)
+# Virtual Environments & Secrets
 venv/
-.env/
+.env
+.env.*
+env/
+ENV/
+
+# IDE Settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS Files
+Thumbs.db
+.DS_Store
+
+# Archives
+*.zip
+*.tar.gz
+*.rar

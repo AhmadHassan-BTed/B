@@ -1,62 +1,34 @@
-"""
-core/bus.py — The Central Nervous System of B
-═══════════════════════════════════════════════
-
-The EventBus is the ONLY way modules communicate. No module ever imports
-another module. They publish events and subscribe to events. Period.
-
-Architecture:
-    - Synchronous dispatch (no threads, no asyncio overhead)
-    - Priority-based subscriber ordering (lower number = higher priority)
-    - Wildcard subscription via "*" for debug/logging hooks
-    - Type-safe event payloads via plain dicts (no dataclass overhead)
-
-Usage:
-    bus = EventBus()
-    bus.subscribe("position_updated", my_callback, priority=0)
-    bus.publish("position_updated", {"x": 100.0, "y": 200.0})
-"""
-
 from __future__ import annotations
 
 import logging
 from typing import Any, Callable
+from PyQt6.QtCore import QObject, pyqtSignal, QThread, QCoreApplication
 
-# ──────────────────────────────────────────────────────────────────────
-# Module-level logger. Each module gets its own logger under the "B"
-# namespace so we can filter logs per-subsystem.
-# ──────────────────────────────────────────────────────────────────────
 logger = logging.getLogger("B.core.bus")
 
-
-class EventBus:
+class EventBus(QObject):
     """
-    A lightweight, synchronous publish/subscribe event bus.
-
+    A thread-aware, synchronous/asynchronous hybrid publish/subscribe event bus.
+    
+    The EventBus is the ONLY way modules communicate.
     Design constraints:
-        1. ZERO external dependencies — pure Python stdlib.
-        2. Synchronous dispatch — events are delivered inline on the
-           caller's thread. No queues, no locks, no context switches.
-           This is intentional: the entire app runs on Qt's event loop
-           thread, so synchronous dispatch gives us deterministic
-           ordering with zero overhead.
-        3. Priority ordering — subscribers with lower priority numbers
-           are called first. Default priority is 100. The WindowManager
-           uses priority 0 so it processes position updates before
-           anything else (minimizes visual latency).
-        4. Wildcard "*" — subscribing to "*" receives ALL events. Used
-           for debugging and future telemetry.
+        1. Thread Safety: Can be published to from any thread.
+        2. UI Safety: Guaranteed dispatch on the Main Thread for UI consistency.
+        3. Priority Ordering: Subscribers are called in order of priority.
     """
+    
+    # Internal signal used to bridge threads
+    _cross_thread_signal = pyqtSignal(str, dict)
 
     def __init__(self) -> None:
-        # ──────────────────────────────────────────────────────────────
-        # Internal storage: event_name -> list of (priority, callback)
-        # Sorted by priority on each subscribe call. We sort once at
-        # subscribe time, not at dispatch time — optimizing for the
-        # hot path (publish is called 60x/sec, subscribe is called once).
-        # ──────────────────────────────────────────────────────────────
+        super().__init__()
+        # event_name -> list of (priority, callback)
         self._subscribers: dict[str, list[tuple[int, Callable]]] = {}
-        logger.debug("EventBus initialized")
+        
+        # Connect the bridge signal to the safe dispatch method
+        self._cross_thread_signal.connect(self._safe_dispatch)
+        
+        logger.info("Thread-Aware EventBus initialized")
 
     def subscribe(
         self,
@@ -64,98 +36,55 @@ class EventBus:
         callback: Callable[[dict[str, Any]], None],
         priority: int = 100,
     ) -> None:
-        """
-        Register a callback for an event.
-
-        Args:
-            event_name: The event to listen for, or "*" for all events.
-            callback:   Function accepting a single dict payload argument.
-            priority:   Lower numbers are called first. Default 100.
-                        Use 0 for latency-critical subscribers (e.g. WindowManager).
-        """
+        """Register a callback for an event."""
         if event_name not in self._subscribers:
             self._subscribers[event_name] = []
 
         self._subscribers[event_name].append((priority, callback))
-
-        # ──────────────────────────────────────────────────────────────
-        # Re-sort by priority after each subscribe. This is O(n log n)
-        # but only happens during initialization (once per subscriber),
-        # not during the 60fps hot loop.
-        # ──────────────────────────────────────────────────────────────
         self._subscribers[event_name].sort(key=lambda x: x[0])
 
-        logger.debug(
-            "Subscribed %s to '%s' at priority %d",
-            callback.__qualname__,
-            event_name,
-            priority,
-        )
+        logger.debug("Subscribed %s to '%s' (Priority %d)", callback.__qualname__, event_name, priority)
 
     def unsubscribe(self, event_name: str, callback: Callable) -> None:
-        """
-        Remove a specific callback from an event channel.
-
-        Silently does nothing if the callback isn't found — this prevents
-        teardown-order bugs during shutdown.
-        """
+        """Remove a specific callback from an event channel."""
         if event_name in self._subscribers:
             self._subscribers[event_name] = [
-                (p, cb)
-                for p, cb in self._subscribers[event_name]
-                if cb is not callback
+                (p, cb) for p, cb in self._subscribers[event_name] if cb is not callback
             ]
-            logger.debug(
-                "Unsubscribed %s from '%s'",
-                callback.__qualname__,
-                event_name,
-            )
 
     def publish(self, event_name: str, payload: dict[str, Any] | None = None) -> None:
         """
-        Dispatch an event to all subscribers synchronously.
-
-        The payload is a plain dict — no copies are made for performance.
-        Subscribers MUST NOT mutate the payload dict. This is a contract,
-        not enforced by code, because deep-copying 60 times per second
-        would be wasteful.
-
-        Args:
-            event_name: The event being broadcast.
-            payload:    Optional dict of event data. Defaults to empty dict.
+        Dispatch an event to all subscribers.
+        If called from a background thread, it automatically redirects execution 
+        to the Main Thread via Qt's signal/slot mechanism.
         """
         if payload is None:
             payload = {}
 
-        # ──────────────────────────────────────────────────────────────
-        # Dispatch to specific subscribers first, then wildcard "*"
-        # subscribers. Wildcard subscribers always run after specific
-        # ones — they're observers, not participants.
-        # ──────────────────────────────────────────────────────────────
+        # Check if we are on the main (GUI) thread
+        main_thread = QCoreApplication.instance().thread()
+        if QThread.currentThread() != main_thread:
+            # Not on main thread: use signal to jump threads
+            self._cross_thread_signal.emit(event_name, payload)
+        else:
+            # Already on main thread: direct call for zero latency
+            self._safe_dispatch(event_name, payload)
+
+    def _safe_dispatch(self, event_name: str, payload: dict[str, Any]) -> None:
+        """The actual dispatch logic, guaranteed to run on the Main Thread."""
         specific = self._subscribers.get(event_name, [])
         wildcard = self._subscribers.get("*", [])
 
+        # Priority-ordered dispatch
         for _priority, callback in specific:
             try:
                 callback(payload)
             except Exception:
-                # ──────────────────────────────────────────────────────
-                # NEVER let a subscriber crash the bus. Log and continue.
-                # B must stay alive no matter what — he's a soul, not a
-                # service that can afford to restart.
-                # ──────────────────────────────────────────────────────
-                logger.exception(
-                    "Subscriber %s crashed on event '%s'",
-                    callback.__qualname__,
-                    event_name,
-                )
+                logger.exception("Subscriber %s crashed on event '%s'", callback.__qualname__, event_name)
 
+        # Wildcard observers
         for _priority, callback in wildcard:
             try:
                 callback(payload)
             except Exception:
-                logger.exception(
-                    "Wildcard subscriber %s crashed on event '%s'",
-                    callback.__qualname__,
-                    event_name,
-                )
+                logger.exception("Wildcard subscriber %s crashed on event '%s'", callback.__qualname__, event_name)

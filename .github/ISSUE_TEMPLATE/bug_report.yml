@@ -1,0 +1,37 @@
+name: Bug Report
+description: File a report to help us improve B
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+      placeholder: B crashed when I...
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: Steps To Reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Run main.py
+        2. Press Ctrl+Shift+Alt+W
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: hardware-info
+    attributes:
+      label: Hardware & OS Info
+      description: Please provide details about your system (CPU, RAM, GPU, Windows version).
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Paste relevant logs here (please remove any sensitive information).

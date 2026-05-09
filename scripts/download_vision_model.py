@@ -2,10 +2,11 @@ import os
 import urllib.request
 import sys
 
-URL = "https://huggingface.co/mradermacher/SmolLM2-1.7B-Instruct-Uncensored-GGUF/resolve/main/SmolLM2-1.7B-Instruct-Uncensored.Q4_K_M.gguf"
+# Moondream2 is a tiny, high-performance vision model (only ~500MB)
+URL = "https://huggingface.co/vikhyatk/moondream2/resolve/main/moondream2-q8_0.gguf"
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEST_DIR = os.path.join(BASE_DIR, "models")
-DEST_PATH = os.path.join(DEST_DIR, "SmolLM2-1.7B-Instruct-Uncensored.Q4_K_M.gguf")
+DEST_PATH = os.path.join(DEST_DIR, "moondream2-q8_0.gguf")
 
 os.makedirs(DEST_DIR, exist_ok=True)
 
@@ -21,11 +22,17 @@ def reporthook(blocknum, blocksize, totalsize):
     else:
         sys.stderr.write("read %d\n" % (readsofar,))
 
-print(f"Downloading {URL}...")
+if os.path.exists(DEST_PATH):
+    print(f"Vision model already exists at {DEST_PATH}")
+    sys.exit(0)
+
+print(f"Downloading Vision Model ({URL})...")
 print(f"To: {DEST_PATH}")
+print("This is ~500MB and is optimized for low-resource systems.")
 
 try:
     urllib.request.urlretrieve(URL, DEST_PATH, reporthook)
     print("\nDownload complete!")
 except Exception as e:
     print(f"\nError downloading: {e}")
+    sys.exit(1)

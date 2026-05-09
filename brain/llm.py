@@ -24,6 +24,16 @@ import threading
 from typing import TYPE_CHECKING, Any, Optional
 
 from PyQt6.QtCore import QObject, QThread, pyqtSignal, QTimer
+from dotenv import load_dotenv
+
+load_dotenv()  # Load variables from .env
+
+# Local model configuration
+USE_LOCAL_MODEL = os.environ.get("USE_LOCAL_MODEL", "false").lower() == "true"
+LOCAL_MODEL_FILENAME = "phi-3-mini-4k-instruct-q4.gguf"
+LOCAL_MODEL_PATH = os.path.join("models", LOCAL_MODEL_FILENAME)
+LOCAL_VISION_FILENAME = "moondream2-q8_0.gguf"
+LOCAL_VISION_PATH = os.path.join("models", LOCAL_VISION_FILENAME)
 
 from brain.work_mode import WORK_MODE_PROMPT
 from groq import Groq
@@ -31,9 +41,15 @@ from groq import Groq
 if TYPE_CHECKING:
     from core.bus import EventBus
 
+if USE_LOCAL_MODEL:
+    try:
+        from llama_cpp import Llama
+    except ImportError:
+        logger.error("llama-cpp-python not installed. Local inference will fail.")
+
 logger = logging.getLogger("B.brain.llm")
 
-GROQ_API_KEY = "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"
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "YOUR_API_KEY_HERE")
 GROQ_MODEL = "llama-3.3-70b-versatile"
 GROQ_VISION_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct"
 
@@ -538,6 +554,25 @@ class CognitiveEngine(QObject):
             self._awaiting_work_goal = False
 
     def _init_llm(self) -> None:
+        if USE_LOCAL_MODEL:
+            self._ensure_model_downloaded()
+            logger.info("Initializing Local Llama Engine (Model: %s)...", LOCAL_MODEL_FILENAME)
+            try:
+                # We initialize with a small context window to save RAM on consumer hardware
+                self._llm = Llama(
+                    model_path=LOCAL_MODEL_PATH,
+                    n_ctx=2048,
+                    n_threads=os.cpu_count() or 4,
+                    verbose=False
+                )
+                logger.info("Local Llama Engine ready.")
+            except Exception:
+                logger.exception("Failed to initialize local LLM. Falling back to Groq if possible.")
+                self._init_groq()
+        else:
+            self._init_groq()
+
+    def _init_groq(self) -> None:
         logger.info("Initializing Groq Engine (Model: %s)...", GROQ_MODEL)
         try:
             self._llm = GroqLLM(api_key=GROQ_API_KEY, model=GROQ_MODEL)
@@ -545,6 +580,23 @@ class CognitiveEngine(QObject):
         except Exception:
             logger.exception("Failed to initialize Groq.")
             self._llm = None
+
+    def _ensure_model_downloaded(self) -> None:
+        """Checks if the models exist; if not, launches the download scripts in new terminals."""
+        models_to_check = [
+            (LOCAL_MODEL_PATH, "download_model.py"),
+            (LOCAL_VISION_PATH, "download_vision_model.py")
+        ]
+        
+        for model_path, script_name in models_to_check:
+            if not os.path.exists(model_path):
+                logger.info("Model not found at %s. Launching %s...", model_path, script_name)
+                script_full_path = os.path.join("scripts", script_name)
+                
+                if sys.platform == "win32":
+                    os.system(f'start cmd /c "python {script_full_path} & pause"')
+                else:
+                    os.system(f'python3 {script_full_path}')
 
     def _load_memory(self) -> dict:
         if os.path.exists(self._memory_path):

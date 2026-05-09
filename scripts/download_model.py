@@ -21,6 +21,11 @@ def reporthook(blocknum, blocksize, totalsize):
     else:
         sys.stderr.write("read %d\n" % (readsofar,))
 
+if os.path.exists(DEST_PATH):
+    print(f"Model already exists at {DEST_PATH}")
+    print("Skipping download.")
+    sys.exit(0)
+
 print(f"Downloading {URL}...")
 print(f"To: {DEST_PATH}")
 print("This is ~2.3GB and might take a few minutes depending on your connection.")
@@ -30,3 +35,4 @@ try:
     print("\nDownload complete!")
 except Exception as e:
     print(f"\nError downloading: {e}")
+    sys.exit(1)
