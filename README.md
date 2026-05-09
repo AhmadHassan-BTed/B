@@ -1,6 +1,6 @@
 <div align="center">
 
-![B Hero Banner](docs/assets/hero_banner.png)
+![B Hero Banner](docs/assets/hero_banner.jpg)
 
 # ─── B ───
 ### *The Soul-Wired Desktop Companion*
@@ -35,7 +35,7 @@ B is designed as a **proactive desktop companion**. Using a 60fps event-driven "
 
 <div align="center">
 
-![B Feature Icons](docs/assets/feature_icons.png)
+![B Feature Icons](docs/assets/feature_icons.jpg)
 
 </div>
 
