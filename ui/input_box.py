@@ -103,7 +103,7 @@ class InputBox(QWidget):
     def _on_speak_mode_toggled(self, payload: dict) -> None:
         self._speak_mode_active = payload.get("active", False)
         if self._speak_mode_active:
-            self._line_edit.setPlaceholderText("🎤 Speak Mode Active - Listening...")
+            self._line_edit.setPlaceholderText(" Speak Mode Active - Listening...")
             self._line_edit.clear()
             self.show()
             self.activateWindow()
@@ -122,7 +122,7 @@ class InputBox(QWidget):
 
     def _update_ui_text(self, text: str) -> None:
         if self._speak_mode_active:
-            self._line_edit.setText(f"🎤 {text}")
+            self._line_edit.setText(f" {text}")
         else:
             self._line_edit.setText(text)
             
@@ -140,7 +140,7 @@ class InputBox(QWidget):
 
     def _finalize_ui_text(self, text: str) -> None:
         if self._speak_mode_active:
-            self._line_edit.setText(f"🎤 {text}")
+            self._line_edit.setText(f" {text}")
         else:
             self._line_edit.setText(text)
         self.show()

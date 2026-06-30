@@ -98,7 +98,7 @@ class AutonomyEngine:
             if elapsed > (self._target_interval - 2.0) and elapsed < self._target_interval:
                 # Force a fresh scan right before B "thinks"
                 if self._work_mode:
-                    logger.debug("🧠 Preparing screen analysis...")
+                    logger.debug(" Preparing screen analysis...")
                 self._bus.publish("request_vision_refresh", {})
 
             if elapsed > self._target_interval:

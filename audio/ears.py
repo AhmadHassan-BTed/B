@@ -279,7 +279,7 @@ class EarsSensor:
             )
             self._vad_model.eval()
             self._vad_model.reset_states()
-            logger.info("Silero VAD: loaded ✓")
+            logger.info("Silero VAD: loaded ")
 
         if self._whisper is None:
             logger.info("Loading Faster-Whisper [%s] …", WHISPER_MODEL)
@@ -290,7 +290,7 @@ class EarsSensor:
                 cpu_threads=WHISPER_THREADS,
                 num_workers=WHISPER_WORKERS,
             )
-            logger.info("Faster-Whisper: loaded ✓")
+            logger.info("Faster-Whisper: loaded ")
 
     # ──────────────────────────────────────────────────────────────────
     # sounddevice input callback

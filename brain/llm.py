@@ -665,7 +665,7 @@ class CognitiveEngine(QObject):
             source = payload.get("extraction_source", "legacy")
             
             print("\n" + "═"*80)
-            print(f"👁️  B'S VISION UPDATED (Work Mode: ON)")
+            print(f"  B'S VISION UPDATED (Work Mode: ON)")
             print(f"   Window: {title}  [{app_type.upper()}]")
             print(f"   Quality: {quality:.2f} | Source: {source}")
             if text:
@@ -722,7 +722,7 @@ class CognitiveEngine(QObject):
                 f"Make a playful, observational, or curious comment to pass the time."
             )
         
-        logger.info(f"🧠 B is analyzing screen context... (Task: {mode})")
+        logger.info(f" B is analyzing screen context... (Task: {mode})")
         self.proactive_thinking_signal.emit(prompt, mode)
 
     def _on_thinking_timeout(self) -> None:

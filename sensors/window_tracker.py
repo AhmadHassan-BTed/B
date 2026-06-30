@@ -363,7 +363,7 @@ class WindowTracker:
             self._polling_fallback()
             return
 
-        logger.info("✓ WinEvent hook installed (handle=0x%X)", self._hook_handle)
+        logger.info(" WinEvent hook installed (handle=0x%X)", self._hook_handle)
 
         # ── Message pump ──────────────────────────────────────────────────────
         msg = ctypes.wintypes.MSG()
@@ -416,7 +416,7 @@ class WindowTracker:
         Emergency fallback if WinEvent hook installation fails.
         Polls at 2s — much higher latency but same functional output.
         """
-        logger.warning("⚠️  POLLING FALLBACK active (2s interval) — hook unavailable")
+        logger.warning(" [WARNING]   POLLING FALLBACK active (2s interval) — hook unavailable")
         while self._running:
             hwnd = _user32.GetForegroundWindow()
             if hwnd:
@@ -467,7 +467,7 @@ class WindowTracker:
         self._current_window = info
         elapsed_ms           = (time.monotonic() - t_start) * 1000
 
-        logger.info("🔎 FOCUS → %s  [%.1f ms]", info, elapsed_ms)
+        logger.info(" FOCUS → %s  [%.1f ms]", info, elapsed_ms)
         if prev:
             logger.debug("   ← was: %s", prev)
 

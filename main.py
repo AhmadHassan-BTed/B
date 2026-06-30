@@ -358,19 +358,19 @@ def _setup_hotkeys(app: QApplication, input_box: InputBox, ears: EarsSensor, bus
                         app._speak_mode = not app._speak_mode
                         app._bus.publish("b_speak_mode_toggled", {"active": app._speak_mode})
                         if app._speak_mode:
-                            logger.info("🎤 Speak Mode: ON")
+                            logger.info(" Speak Mode: ON")
                             app._ears.start_listening()
                         else:
-                            logger.info("🎤 Speak Mode: OFF")
+                            logger.info(" Speak Mode: OFF")
                             app._ears.stop_listening()
                         return True, 0
                     elif msg.wParam == app._hotkey_work:
                         app._work_mode = not app._work_mode
                         app._bus.publish("b_work_mode_toggled", {"active": app._work_mode})
                         if app._work_mode:
-                            logger.info("💼 Work Mode: ON")
+                            logger.info(" Work Mode: ON")
                         else:
-                            logger.info("💼 Work Mode: OFF")
+                            logger.info(" Work Mode: OFF")
                         return True, 0
                 return False, 0
         

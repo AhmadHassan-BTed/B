@@ -19,7 +19,7 @@
 
 ---
 
-## 🌌 The Vision
+##  The Vision
 
 Traditional assistants wait for a command. **B** waits for a moment. 
 
@@ -31,7 +31,7 @@ B is designed as a **proactive desktop companion**. Using a 60fps event-driven "
 
 ---
 
-## 🧠 Core Systems
+##  Core Systems
 
 <div align="center">
 
@@ -49,7 +49,7 @@ B is designed as a **proactive desktop companion**. Using a 60fps event-driven "
 
 ---
 
-## 💼 Agentic "Work Mode"
+##  Agentic "Work Mode"
 
 Activated via `Ctrl+Shift+Alt+W`, Work Mode shifts B into a high-utility state:
 - **Semantic Monitoring**: B monitors your progress on tasks in real-time.
@@ -58,7 +58,7 @@ Activated via `Ctrl+Shift+Alt+W`, Work Mode shifts B into a high-utility state:
 
 ---
 
-## 🛠️ Tech Stack
+##  [SETUP]  Tech Stack
 
 <div align="center">
 
@@ -73,7 +73,7 @@ B is built for the Windows ecosystem, leveraging low-level Win32 APIs for transp
 
 ---
 
-## 🛑 Safety & Kill Switch
+##  [STOP]  Safety & Kill Switch
 
 Human-centric safety is baked into the core. Because B lives on a transparent, click-through overlay without a standard "X" button, we've implemented a global emergency exit:
 
@@ -83,7 +83,7 @@ Human-centric safety is baked into the core. Because B lives on a transparent, c
 
 ---
 
-## 🚀 Installation
+##  [START]  Installation
 
 1. **Clone the Soul**:
    ```bash
@@ -107,7 +107,7 @@ Human-centric safety is baked into the core. Because B lives on a transparent, c
 
 <div align="center">
 
-Built with ❤️ by [Ahmad Hassan](https://github.com/Ahmad-Hassan-0)
+Built with  by [Ahmad Hassan](https://github.com/Ahmad-Hassan-0)
 *Wiring the soul, one tick at a time.*
 
 </div>
