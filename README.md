@@ -17,6 +17,18 @@
 
 </div>
 
+<br>
+
+<div align="center">
+
+## Demo
+
+<video src="docs/assets/demo-video.mp4" controls width="100%" style="max-width: 800px; border-radius: 12px;"></video>
+
+*B in action - watch him observe, think, and respond.*
+
+</div>
+
 ---
 
 ## The Vision
@@ -120,36 +132,36 @@ sequenceDiagram
 
 ### Core Infrastructure
 
-| Module | File | Responsibility |
-| :----- | :--- | :------------- |
-| **EventBus** | `core/bus.py` | Thread-safe pub/sub message broker. All inter-module communication flows through this. |
-| **main.py** | `main.py` | Boot sequence : instantiates all modules, starts the 60fps tick timer, registers global hotkeys. |
+| Module       | File          | Responsibility                                                                                   |
+| :----------- | :------------ | :----------------------------------------------------------------------------------------------- |
+| **EventBus** | `core/bus.py` | Thread-safe pub/sub message broker. All inter-module communication flows through this.           |
+| **main.py**  | `main.py`     | Boot sequence : instantiates all modules, starts the 60fps tick timer, registers global hotkeys. |
 
 ### Perception Layer (Sensors)
 
-| Module | File | Responsibility |
-| :----- | :--- | :------------- |
-| **WindowTracker** | `sensors/window_tracker.py` | Hook-based active window change detection. Fires when the user switches focus. |
-| **SemanticSensor** | `vision/semantic.py` | UIA-based DOM/window tree walking. Extracts structured content with quality scoring and adaptive cooldown. |
-| **VisionSensor** | `vision/mss_capture.py` | OCR fallback pipeline using MSS + Tesseract for frameworks incompatible with UIA. |
+| Module             | File                        | Responsibility                                                                                             |
+| :----------------- | :-------------------------- | :--------------------------------------------------------------------------------------------------------- |
+| **WindowTracker**  | `sensors/window_tracker.py` | Hook-based active window change detection. Fires when the user switches focus.                             |
+| **SemanticSensor** | `vision/semantic.py`        | UIA-based DOM/window tree walking. Extracts structured content with quality scoring and adaptive cooldown. |
+| **VisionSensor**   | `vision/mss_capture.py`     | OCR fallback pipeline using MSS + Tesseract for frameworks incompatible with UIA.                          |
 
 ### Cognitive Layer (The Brain)
 
-| Module | File | Responsibility |
-| :----- | :--- | :------------- |
-| **CognitiveEngine** | `brain/llm.py` | LLM inference orchestration (Groq cloud or local llama-cpp). Manages context, history, spatial mapping, and streaming token parsing. |
-| **StateMachine** | `brain/soul.py` | B's emotional state : blinking, resting, conversing. Real-time stream buffer that parses LLM output into sentences. |
-| **AutonomyEngine** | `brain/autonomy_loop.py` | Proactive thought scheduling : decides when B should speak unprompted based on context quality and timing. |
+| Module              | File                     | Responsibility                                                                                                                       |
+| :------------------ | :----------------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
+| **CognitiveEngine** | `brain/llm.py`           | LLM inference orchestration (Groq cloud or local llama-cpp). Manages context, history, spatial mapping, and streaming token parsing. |
+| **StateMachine**    | `brain/soul.py`          | B's emotional state : blinking, resting, conversing. Real-time stream buffer that parses LLM output into sentences.                  |
+| **AutonomyEngine**  | `brain/autonomy_loop.py` | Proactive thought scheduling : decides when B should speak unprompted based on context quality and timing.                           |
 
 ### Output Layer (Expression)
 
-| Module | File | Responsibility |
-| :----- | :--- | :------------- |
-| **VoiceEngine** | `audio/speaker.py` | Piper ONNX TTS with DSP vocoder chain (pitch shift, bitcrush, chorus) for robotic modulation. |
-| **FaceRenderer** | `ui/face.py` | PyQt6 QPainter-based hardware-accelerated face rendering at 60fps. |
-| **ChatBubble** | `ui/chat.py` | Glassmorphic chat overlay that displays B's spoken text. |
-| **KinematicsEngine** | `physics/kinematics.py` | Physics-based movement with Bezier path interpolation and easing curves. |
-| **EarsSensor** | `audio/ears.py` | Speech-to-text via Faster-Whisper with neural VAD. |
+| Module               | File                    | Responsibility                                                                                |
+| :------------------- | :---------------------- | :-------------------------------------------------------------------------------------------- |
+| **VoiceEngine**      | `audio/speaker.py`      | Piper ONNX TTS with DSP vocoder chain (pitch shift, bitcrush, chorus) for robotic modulation. |
+| **FaceRenderer**     | `ui/face.py`            | PyQt6 QPainter-based hardware-accelerated face rendering at 60fps.                            |
+| **ChatBubble**       | `ui/chat.py`            | Glassmorphic chat overlay that displays B's spoken text.                                      |
+| **KinematicsEngine** | `physics/kinematics.py` | Physics-based movement with Bezier path interpolation and easing curves.                      |
+| **EarsSensor**       | `audio/ears.py`         | Speech-to-text via Faster-Whisper with neural VAD.                                            |
 
 ---
 
@@ -252,14 +264,14 @@ B/
 
 ## Core Systems
 
-| System | Technology | Description |
-| :----- | :--------- | :---------- |
-| **Cognitive Engine** | `Groq API` / `llama-cpp` | Cloud or local LLM inference for private, high-speed reasoning. |
-| **Semantic Vision** | `UIAutomation` + `Tesseract OCR` | B understands the context of your active windows and screen content. |
-| **Neural Hearing** | `Faster-Whisper` | Industry-grade transcription with neural VAD for reliable ears. |
-| **Vocal Synthesis** | `Piper TTS` + `Pedalboard DSP` | Low-latency, natural-sounding voice with robotic modulation effects. |
-| **Kinematics** | `PyQt6 QPropertyAnimation` | Smooth, 60fps movement with Bezier path interpolation and easing curves. |
-| **Event Bus** | `PyQt6 pyqtSignal` | Thread-safe pub/sub message broker : the central nervous system. |
+| System               | Technology                       | Description                                                              |
+| :------------------- | :------------------------------- | :----------------------------------------------------------------------- |
+| **Cognitive Engine** | `Groq API` / `llama-cpp`         | Cloud or local LLM inference for private, high-speed reasoning.          |
+| **Semantic Vision**  | `UIAutomation` + `Tesseract OCR` | B understands the context of your active windows and screen content.     |
+| **Neural Hearing**   | `Faster-Whisper`                 | Industry-grade transcription with neural VAD for reliable ears.          |
+| **Vocal Synthesis**  | `Piper TTS` + `Pedalboard DSP`   | Low-latency, natural-sounding voice with robotic modulation effects.     |
+| **Kinematics**       | `PyQt6 QPropertyAnimation`       | Smooth, 60fps movement with Bezier path interpolation and easing curves. |
+| **Event Bus**        | `PyQt6 pyqtSignal`               | Thread-safe pub/sub message broker : the central nervous system.         |
 
 ---
 
@@ -287,12 +299,12 @@ flowchart TB
 
 ## Hotkeys
 
-| Shortcut | Action |
-| :------- | :----- |
+| Shortcut           | Action                                                                    |
+| :----------------- | :------------------------------------------------------------------------ |
 | `Ctrl+Shift+Alt+Q` | **Kill switch** : immediately terminates B and releases all system hooks. |
-| `Ctrl+Shift+Alt+B` | Toggle input box : type messages to B. |
-| `Ctrl+Shift+Alt+V` | Toggle speak mode : talk to B via microphone. |
-| `Ctrl+Shift+Alt+W` | Toggle work mode : B becomes a proactive assistant. |
+| `Ctrl+Shift+Alt+B` | Toggle input box : type messages to B.                                    |
+| `Ctrl+Shift+Alt+V` | Toggle speak mode : talk to B via microphone.                             |
+| `Ctrl+Shift+Alt+W` | Toggle work mode : B becomes a proactive assistant.                       |
 
 ---
 
@@ -337,14 +349,14 @@ Because B lives on a transparent, click-through overlay without a standard close
 
 ## Technical Constraints
 
-| Constraint | Target |
-| :--------- | :----- |
-| **CPU** | Intel i5 (Quad-Core) or equivalent |
-| **RAM** | 16 GB |
-| **Display** | Any resolution (adaptive) |
-| **OS** | Windows 10/11 (primary), Linux/macOS (experimental) |
-| **Tick Rate** | 60 fps (16ms interval) |
-| **Inference** | Groq API (cloud) or llama-cpp (local, 4GB+ model) |
+| Constraint    | Target                                              |
+| :------------ | :-------------------------------------------------- |
+| **CPU**       | Intel i5 (Quad-Core) or equivalent                  |
+| **RAM**       | 16 GB                                               |
+| **Display**   | Any resolution (adaptive)                           |
+| **OS**        | Windows 10/11 (primary), Linux/macOS (experimental) |
+| **Tick Rate** | 60 fps (16ms interval)                              |
+| **Inference** | Groq API (cloud) or llama-cpp (local, 4GB+ model)   |
 
 ---
 
