@@ -1,6 +1,6 @@
 <div align="center">
 
-![B Hero Banner](docs/assets/hero_banner.jpg)
+![B Hero Banner](docs/assets/hero_banner.png)
 
 # ─── B ───
 ### *The Soul-Wired Desktop Companion*
