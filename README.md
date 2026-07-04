@@ -33,19 +33,14 @@ B is designed as a **proactive desktop companion**. Using a 60fps event-driven "
 
 ##  Core Systems
 
-<div align="center">
 
-![B Feature Icons](docs/assets/feature_icons.jpg)
-
-</div>
-
-| System | Technology | Description |
-| :--- | :--- | :--- |
-| **Cognitive Engine** | `Llama-CPP` | Local LLM inference for private, high-speed reasoning. |
-| **Semantic Vision** | `OCR + Window Tracking` | B understands the context of your active windows and screen content. |
-| **Neural Hearing** | `Faster-Whisper` | Industry-grade transcription with neural VAD for reliable "ears." |
-| **Vocal Synthesis** | `Piper TTS` | Low-latency, natural-sounding voice for fluid interaction. |
-| **Kinematics** | `PyQt6 Physics` | Smooth, 60fps movement and fluid UI animations. |
+| System               | Technology              | Description                                                          |
+| :------------------- | :---------------------- | :------------------------------------------------------------------- |
+| **Cognitive Engine** | `Llama-CPP`             | Local LLM inference for private, high-speed reasoning.               |
+| **Semantic Vision**  | `OCR + Window Tracking` | B understands the context of your active windows and screen content. |
+| **Neural Hearing**   | `Faster-Whisper`        | Industry-grade transcription with neural VAD for reliable "ears."    |
+| **Vocal Synthesis**  | `Piper TTS`             | Low-latency, natural-sounding voice for fluid interaction.           |
+| **Kinematics**       | `PyQt6 Physics`         | Smooth, 60fps movement and fluid UI animations.                      |
 
 ---
 
