@@ -36,44 +36,44 @@ B is designed as a **proactive desktop companion**. Using a 60fps event-driven c
 B is built on a **centralized asynchronous pub/sub event bus** : the `EventBus`. Every module communicates exclusively through this bus. No module knows about any other module. This strict decoupling makes the system testable, maintainable, and resilient.
 
 ```mermaid
-graph TB
-    subgraph "Perception Layer"
-        WT[WindowTracker]
-        SS[SemanticSensor]
-        VS[VisionSensor OCR]
+flowchart TB
+    subgraph P["Perception Layer"]
+        WT["WindowTracker"]
+        SS["SemanticSensor"]
+        VS["VisionSensor OCR"]
     end
 
-    subgraph "Cognitive Layer"
-        CE[CognitiveEngine]
-        SM[StateMachine]
-        AE[AutonomyEngine]
+    subgraph C["Cognitive Layer"]
+        CE["CognitiveEngine"]
+        SM["StateMachine"]
+        AE["AutonomyEngine"]
     end
 
-    subgraph "Output Layer"
-        VE[VoiceEngine]
-        FR[FaceRenderer]
-        CB[ChatBubble]
-        KE[KinematicsEngine]
+    subgraph O["Output Layer"]
+        VE["VoiceEngine"]
+        FR["FaceRenderer"]
+        CB["ChatBubble"]
+        KE["KinematicsEngine"]
     end
 
-    subgraph "Core Infrastructure"
-        EB[EventBus]
+    subgraph I["Core Infrastructure"]
+        EB["EventBus"]
     end
 
-    WT -->|active_window_changed| EB
-    SS -->|context_updated| EB
-    VS -->|context_updated| EB
-    EB -->|context_updated| CE
-    EB -->|tick| SM
-    EB -->|tick| KE
-    CE -->|b_spoke| EB
-    EB -->|b_spoke| VE
-    EB -->|b_spoke| FR
-    EB -->|b_spoke| CB
-    CE -->|b_move_request| EB
-    EB -->|b_move_request| KE
-    AE -->|trigger_proactive_thought| EB
-    EB -->|trigger_proactive_thought| CE
+    WT -- "active_window_changed" --> EB
+    SS -- "context_updated" --> EB
+    VS -- "context_updated" --> EB
+    EB -- "context_updated" --> CE
+    EB -- "tick" --> SM
+    EB -- "tick" --> KE
+    CE -- "b_spoke" --> EB
+    EB -- "b_spoke" --> VE
+    EB -- "b_spoke" --> FR
+    EB -- "b_spoke" --> CB
+    CE -- "b_move_request" --> EB
+    EB -- "b_move_request" --> KE
+    AE -- "trigger_proactive_thought" --> EB
+    EB -- "trigger_proactive_thought" --> CE
 ```
 
 ---
@@ -157,34 +157,34 @@ sequenceDiagram
 
 ```mermaid
 flowchart LR
-    subgraph Input
-        A[User Types]
-        B[User Speaks]
-        C[Screen Changes]
+    subgraph Input["Input"]
+        A["User Types"]
+        B["User Speaks"]
+        C["Screen Changes"]
     end
 
-    subgraph Processing
-        D[EventBus]
-        E[CognitiveEngine]
-        F[StateMachine]
+    subgraph Process["Processing"]
+        D["EventBus"]
+        E["CognitiveEngine"]
+        F["StateMachine"]
     end
 
-    subgraph Output
-        G[FaceRenderer]
-        H[VoiceEngine]
-        I[ChatBubble]
-        J[Kinematics]
+    subgraph Output["Output"]
+        G["FaceRenderer"]
+        H["VoiceEngine"]
+        I["ChatBubble"]
+        J["Kinematics"]
     end
 
-    A --> D
-    B --> D
-    C --> D
-    D --> E
-    E --> F
-    F --> G
-    F --> H
-    F --> I
-    E --> J
+    A -- types --> D
+    B -- speaks --> D
+    C -- changes --> D
+    D -- routes --> E
+    E -- drives --> F
+    F -- animates --> G
+    F -- speaks --> H
+    F -- displays --> I
+    E -- moves --> J
 ```
 
 ---
@@ -194,16 +194,16 @@ flowchart LR
 ```mermaid
 stateDiagram-v2
     [*] --> Idle
-    Idle --> Listening: user_spoke / voice detected
-    Listening --> Thinking: 1.2s delay
-    Thinking --> Streaming: first token received
-    Streaming --> Speaking: sentence_ready
-    Speaking --> Streaming: next sentence
-    Streaming --> Idle: [SILENCE] / end of response
-    Speaking --> Idle: finished_speaking + linger
-    Idle --> Proactive: autonomy trigger
-    Proactive --> Thinking: context available
-    Proactive --> Idle: no context / silence
+    Idle --> Listening : user_spoke / voice detected
+    Listening --> Thinking : 1.2s delay
+    Thinking --> Streaming : first token received
+    Streaming --> Speaking : sentence_ready
+    Speaking --> Streaming : next sentence
+    Streaming --> Idle : [SILENCE] / end of response
+    Speaking --> Idle : finished_speaking + linger
+    Idle --> Proactive : autonomy trigger
+    Proactive --> Thinking : context available
+    Proactive --> Idle : no context / silence
 ```
 
 ---
@@ -273,16 +273,14 @@ Activated via `Ctrl+Shift+Alt+W`, Work Mode shifts B into a high-utility state:
 
 ```mermaid
 flowchart TB
-    subgraph "Work Mode Lifecycle"
-        A[User presses Ctrl+Shift+Alt+W] --> B[B asks: what are you working on?]
-        B --> C[User defines goal]
-        C --> D[B monitors screen context]
-        D --> E{Relevant content?}
-        E -->|Yes| F[B offers insight / help]
-        E -->|No| G[B stays silent]
-        F --> D
-        G --> D
-    end
+    A["User presses Ctrl+Shift+Alt+W"] --> B["B asks: what are you working on?"]
+    B --> C["User defines goal"]
+    C --> D["B monitors screen context"]
+    D --> E{"Relevant content?"}
+    E -- "Yes" --> F["B offers insight / help"]
+    E -- "No" --> G["B stays silent"]
+    F --> D
+    G --> D
 ```
 
 ---
