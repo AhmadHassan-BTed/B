@@ -11,7 +11,7 @@
 [![Privacy](https://img.shields.io/badge/Privacy-First-green?style=for-the-badge)](PRIVACY.md)
 [![Status](https://img.shields.io/badge/Status-Active_Development-blueviolet?style=for-the-badge)](https://github.com/Ahmad-Hassan-0/B---desktop-companion)
 
-**B** is not just an AI — he is a digital lifeform designed to live on your desktop. Built with a soul-first architecture, B observes your workflow, listens with neural precision, and interacts through a high-performance, glassmorphic overlay.
+**B** is not just an AI : he is a digital lifeform designed to live on your desktop. Built with a soul-first architecture, B observes your workflow, listens with neural precision, and interacts through a high-performance, glassmorphic overlay.
 
 [Explore the Vision](#-the-vision) • [Architecture](#-architecture-overview) • [Getting Started](#-installation) • [Contributing](CONTRIBUTING.md) • [Privacy](PRIVACY.md)
 
@@ -25,15 +25,15 @@ Traditional assistants wait for a command. **B** waits for a moment.
 
 B is designed as a **proactive desktop companion**. Using a 60fps event-driven central nervous system, B synchronizes his emotional state with your environment. He sees your screen semantically, tracks your active focus, and intervenes only when he has something truly valuable to contribute.
 
-- **Silent by Default** — B respects your deep work state.
-- **Emotionally Aware** — A complex internal state machine drives expressions and curiosity.
-- **Agentic Autonomy** — B doesn't just respond; he thinks, wonders, and observes.
+- **Silent by Default** : B respects your deep work state.
+- **Emotionally Aware** : A complex internal state machine drives expressions and curiosity.
+- **Agentic Autonomy** : B doesn't just respond; he thinks, wonders, and observes.
 
 ---
 
 ## Architecture Overview
 
-B is built on a **centralized asynchronous pub/sub event bus** — the `EventBus`. Every module communicates exclusively through this bus. No module knows about any other module. This strict decoupling makes the system testable, maintainable, and resilient.
+B is built on a **centralized asynchronous pub/sub event bus** : the `EventBus`. Every module communicates exclusively through this bus. No module knows about any other module. This strict decoupling makes the system testable, maintainable, and resilient.
 
 ```mermaid
 graph TB
@@ -123,7 +123,7 @@ sequenceDiagram
 | Module | File | Responsibility |
 | :----- | :--- | :------------- |
 | **EventBus** | `core/bus.py` | Thread-safe pub/sub message broker. All inter-module communication flows through this. |
-| **main.py** | `main.py` | Boot sequence — instantiates all modules, starts the 60fps tick timer, registers global hotkeys. |
+| **main.py** | `main.py` | Boot sequence : instantiates all modules, starts the 60fps tick timer, registers global hotkeys. |
 
 ### Perception Layer (Sensors)
 
@@ -138,8 +138,8 @@ sequenceDiagram
 | Module | File | Responsibility |
 | :----- | :--- | :------------- |
 | **CognitiveEngine** | `brain/llm.py` | LLM inference orchestration (Groq cloud or local llama-cpp). Manages context, history, spatial mapping, and streaming token parsing. |
-| **StateMachine** | `brain/soul.py` | B's emotional state — blinking, resting, conversing. Real-time stream buffer that parses LLM output into sentences. |
-| **AutonomyEngine** | `brain/autonomy_loop.py` | Proactive thought scheduling — decides when B should speak unprompted based on context quality and timing. |
+| **StateMachine** | `brain/soul.py` | B's emotional state : blinking, resting, conversing. Real-time stream buffer that parses LLM output into sentences. |
+| **AutonomyEngine** | `brain/autonomy_loop.py` | Proactive thought scheduling : decides when B should speak unprompted based on context quality and timing. |
 
 ### Output Layer (Expression)
 
@@ -212,30 +212,30 @@ stateDiagram-v2
 
 ```
 B/
-├── main.py                  # Entry point — boot sequence
+├── main.py                  # Entry point : boot sequence
 ├── core/
-│   └── bus.py               # EventBus — central nervous system
+│   └── bus.py               # EventBus : central nervous system
 ├── brain/
-│   ├── llm.py               # CognitiveEngine — LLM inference
-│   ├── soul.py              # StateMachine — emotions & stream buffer
-│   ├── autonomy_loop.py     # AutonomyEngine — proactive thought
+│   ├── llm.py               # CognitiveEngine : LLM inference
+│   ├── soul.py              # StateMachine : emotions & stream buffer
+│   ├── autonomy_loop.py     # AutonomyEngine : proactive thought
 │   ├── context.py           # Context management
 │   └── work_mode.py         # Work mode prompt templates
 ├── vision/
-│   ├── semantic.py          # SemanticSensor — UIA extraction
-│   └── mss_capture.py       # VisionSensor — OCR fallback
+│   ├── semantic.py          # SemanticSensor : UIA extraction
+│   └── mss_capture.py       # VisionSensor : OCR fallback
 ├── sensors/
-│   └── window_tracker.py    # WindowTracker — focus detection
+│   └── window_tracker.py    # WindowTracker : focus detection
 ├── audio/
-│   ├── speaker.py           # VoiceEngine — TTS + DSP
-│   └── ears.py              # EarsSensor — STT
+│   ├── speaker.py           # VoiceEngine : TTS + DSP
+│   └── ears.py              # EarsSensor : STT
 ├── physics/
-│   └── kinematics.py        # KinematicsEngine — movement
+│   └── kinematics.py        # KinematicsEngine : movement
 ├── ui/
-│   ├── overlay.py           # WindowManager — transparent overlay
-│   ├── face.py              # FaceRenderer — 60fps face
-│   ├── chat.py              # ChatBubble — text overlay
-│   ├── input_box.py         # InputBox — text input
+│   ├── overlay.py           # WindowManager : transparent overlay
+│   ├── face.py              # FaceRenderer : 60fps face
+│   ├── chat.py              # ChatBubble : text overlay
+│   ├── input_box.py         # InputBox : text input
 │   ├── expressions.py       # Expression definitions
 │   └── theme.py             # Visual theming
 ├── models/                  # Local GGUF models (gitignored)
@@ -259,7 +259,7 @@ B/
 | **Neural Hearing** | `Faster-Whisper` | Industry-grade transcription with neural VAD for reliable ears. |
 | **Vocal Synthesis** | `Piper TTS` + `Pedalboard DSP` | Low-latency, natural-sounding voice with robotic modulation effects. |
 | **Kinematics** | `PyQt6 QPropertyAnimation` | Smooth, 60fps movement with Bezier path interpolation and easing curves. |
-| **Event Bus** | `PyQt6 pyqtSignal` | Thread-safe pub/sub message broker — the central nervous system. |
+| **Event Bus** | `PyQt6 pyqtSignal` | Thread-safe pub/sub message broker : the central nervous system. |
 
 ---
 
@@ -267,9 +267,9 @@ B/
 
 Activated via `Ctrl+Shift+Alt+W`, Work Mode shifts B into a high-utility state:
 
-- **Semantic Monitoring** — B monitors your progress on tasks in real-time.
-- **Contextual Curiosity** — Proactively offers insights, documentation, or suggestions based on your current focus.
-- **Minimalist Presence** — Dims facial expressions to minimize distraction while remaining vigilant.
+- **Semantic Monitoring** : B monitors your progress on tasks in real-time.
+- **Contextual Curiosity** : Proactively offers insights, documentation, or suggestions based on your current focus.
+- **Minimalist Presence** : Dims facial expressions to minimize distraction while remaining vigilant.
 
 ```mermaid
 flowchart TB
@@ -291,10 +291,10 @@ flowchart TB
 
 | Shortcut | Action |
 | :------- | :----- |
-| `Ctrl+Shift+Alt+Q` | **Kill switch** — immediately terminates B and releases all system hooks. |
-| `Ctrl+Shift+Alt+B` | Toggle input box — type messages to B. |
-| `Ctrl+Shift+Alt+V` | Toggle speak mode — talk to B via microphone. |
-| `Ctrl+Shift+Alt+W` | Toggle work mode — B becomes a proactive assistant. |
+| `Ctrl+Shift+Alt+Q` | **Kill switch** : immediately terminates B and releases all system hooks. |
+| `Ctrl+Shift+Alt+B` | Toggle input box : type messages to B. |
+| `Ctrl+Shift+Alt+V` | Toggle speak mode : talk to B via microphone. |
+| `Ctrl+Shift+Alt+W` | Toggle work mode : B becomes a proactive assistant. |
 
 ---
 
