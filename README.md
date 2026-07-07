@@ -23,7 +23,7 @@
 
 ## Demo
 
-<video src="docs/assets/demo-video.mp4" controls width="100%" style="max-width: 800px; border-radius: 12px;"></video>
+<video src="https://raw.githubusercontent.com/Ahmad-Hassan-0/B---desktop-companion/main/docs/assets/demo-video.mp4" controls width="100%" style="max-width: 800px; border-radius: 12px;"></video>
 
 *B in action - watch him observe, think, and respond.*
 
